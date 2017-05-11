@@ -62,5 +62,7 @@ SQLMirrorModel.swift
 
 你的star是我的动力
 
-有任何疑问或建议. 欢迎在github或博客里issue我. 
+有任何疑问或建议. 欢迎在github或微博里issue我. 
+微博:[@KTony](http://weibo.com/u/3648931023)
+
 
