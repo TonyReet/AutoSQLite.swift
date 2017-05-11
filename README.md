@@ -12,7 +12,7 @@ SQLite.swift的封装，使用swift的反射原理，Model直接存储.获取. �
 1、首次提交代码，很多地方不完善，暂时自己使用，瞧上的可以尝尝鲜
 
 
-###使用方法
+### 使用方法
 - 1、引入source目录下的文件文件:
 
 ```
@@ -54,7 +54,8 @@ SQLMirrorModel.swift
         }
 ```
 
-###TODO:
+### TODO:
+
 1、添加对非基本类型的处理
 2、支持使用protocol,减少代码的耦合
 2、支持pod,carthage
