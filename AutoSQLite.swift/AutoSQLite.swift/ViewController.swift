@@ -24,17 +24,17 @@ class ViewController: UIViewController {
         
         let student = TestModel()
         
-        // 插入,Y
+        // 插入
         manager.insert(object: student, intoTable: "testTable")
         
-        // delete by id,Y
+        // 删除
         manager.delete(fromTable: "testTable", sqlWhere: "pkid = 2")
         
-        // update,Y
+        // 更新
         student.name = "lilei"
         manager.update(student, fromTable: "testTable")
         
-        // select
+        // 查询
         let results = manager.select(fromTable: "testTable", sqlWhere: "pkid = 1")
         for result in results {
             print("查询的数据\(result)")
