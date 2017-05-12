@@ -12,4 +12,5 @@ class SQLMirrorModel: NSObject {
     var key     : String?
     var value   : AnyObject?
     var type    : Any.Type?
+    var primaryKey : String?
 }

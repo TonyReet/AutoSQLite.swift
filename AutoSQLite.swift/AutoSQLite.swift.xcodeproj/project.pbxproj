@@ -19,6 +19,7 @@
 		186965EF1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */; };
 		186965F01EC46A7E00B6D2F9 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 186965E71EC4699E00B6D2F9 /* SQLite.framework */; };
 		186965F11EC46A7E00B6D2F9 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 186965E71EC4699E00B6D2F9 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		186965F41EC5B20500B6D2F9 /* SQLiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 		186965EA1EC469EF00B6D2F9 /* SQLiteDataBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDataBase.swift; sourceTree = "<group>"; };
 		186965EC1EC46A0D00B6D2F9 /* SQLMirrorModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLMirrorModel.swift; sourceTree = "<group>"; };
 		186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDataBaseTool.swift; sourceTree = "<group>"; };
+		186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 		186965E91EC469D700B6D2F9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */,
 				186965EA1EC469EF00B6D2F9 /* SQLiteDataBase.swift */,
 				186965EC1EC46A0D00B6D2F9 /* SQLMirrorModel.swift */,
 				186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */,
@@ -303,6 +306,7 @@
 				186965BA1EC4697C00B6D2F9 /* AppDelegate.swift in Sources */,
 				186965ED1EC46A0D00B6D2F9 /* SQLMirrorModel.swift in Sources */,
 				186965EF1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift in Sources */,
+				186965F41EC5B20500B6D2F9 /* SQLiteModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,6 +565,7 @@
 				186965E01EC4697C00B6D2F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		186965E11EC4697C00B6D2F9 /* Build configuration list for PBXNativeTarget "AutoSQLite.swiftTests" */ = {
 			isa = XCConfigurationList;
@@ -569,6 +574,7 @@
 				186965E31EC4697C00B6D2F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		186965E41EC4697C00B6D2F9 /* Build configuration list for PBXNativeTarget "AutoSQLite.swiftUITests" */ = {
 			isa = XCConfigurationList;
@@ -577,6 +583,7 @@
 				186965E61EC4697C00B6D2F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -8,10 +8,32 @@
 
 import UIKit
 
-class TestModel: NSObject {
+class TestModel: SQLiteModel {
     var name = "hanmeimei"
     var age  = 18
     var pkid = 1//PRIMARY KEY ID
+    
+    var ignore: String = ""//需要忽略的属性
+    
+    //后面需要支持的类型
+//    var optionalString : String?
+//    var optionalInt : Int?
+//    
+//    var optionaldate:NSDate?
+//    var optionalisTest:Bool?
+//    var optionalDouble:Double?
+//    var optionalFloat:Float?
+//    var testModels:[TestModel]? = []
+    
+    
+    override func primaryKey() -> String {
+        return "pkid"
+    }
+    
+    override func ignoreKeys() -> [String] {
+        return ["ignore"]
+    }
+    
 }
 
 class ViewController: UIViewController {
@@ -20,7 +42,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         // 创建db
-        let manager: SQLiteDataBase = SQLiteDataBase.create(withDBName: "testDB")
+        let manager: SQLiteDataBase = SQLiteDataBase.createDB("testDB")
         
         let student = TestModel()
         

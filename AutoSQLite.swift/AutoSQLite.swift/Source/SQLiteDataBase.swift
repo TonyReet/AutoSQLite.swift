@@ -9,7 +9,7 @@
 import Foundation
 import SQLite
 
-let pkid = "pkid"//PRIMARY KEY ID
+//let pkid = "pkid"//PRIMARY KEY ID
 
 class SQLiteDataBase: NSObject {
     //创建单例
@@ -28,14 +28,14 @@ class SQLiteDataBase: NSObject {
     
     // MARK: - 初始化
     // 初始化db
-    class func create(withDBName DBName: String)->SQLiteDataBase {
+    class func createDB(_ dataBaseName: String)->SQLiteDataBase {
         let sqliteDataBase = SQLiteDataBase.shared
         
         let defaultPath = sqliteDataBase.defaultPath()
         
-        if sqliteDataBase.checkNameIsVerify(DBName) {
+        if sqliteDataBase.checkNameIsVerify(dataBaseName) {
             
-            let databaseName = SQLiteDataBaseTool.removeBlankSpace(DBName)
+            let databaseName = SQLiteDataBaseTool.removeBlankSpace(dataBaseName)
             
             sqliteDataBase.database = try? Connection("\(defaultPath)/\(databaseName).sqlite3")
             sqliteDataBase.databasePath = "\(defaultPath)/\(databaseName).sqlite3"
@@ -54,7 +54,7 @@ class SQLiteDataBase: NSObject {
     
     
     // MARK: - 创建表
-    class func createTable(_ tableName: String,object:Any) {
+    class func createTable(_ tableName: String,object:SQLiteModel) {
         let sqliteDataBase = SQLiteDataBase.shared
         sqliteDataBase.operateByMirror(object: object) { [weak sqliteDataBase](sqlMirrorModels) in
             guard let strongSqliteDataBase = sqliteDataBase else{
@@ -66,13 +66,13 @@ class SQLiteDataBase: NSObject {
     }
     
     // MARK: - 插入数据
-    class func insert(object: Any, intoTable tableName: String) {
+    class func insert(object: SQLiteModel, intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.insert(object:object, intoTable: tableName)
     }
     
-    class func insertList(objectList: [Any], intoTable tableName: String) {
+    class func insertList(objectList: [SQLiteModel], intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         for object in objectList {
@@ -82,13 +82,13 @@ class SQLiteDataBase: NSObject {
     
     
     // MARK: - 更新数据
-    class func update(_ object: Any,fromTable tableName: String) {
+    class func update(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.update(object,fromTable:tableName)
     }
     
-    class func updateList(objectList: [Any], intoTable tableName: String) {
+    class func updateList(objectList: [SQLiteModel], intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         for object in objectList {
@@ -109,7 +109,7 @@ class SQLiteDataBase: NSObject {
     
     
     // MARK: - 删除数据
-    class func deleteModel(_ object: Any,fromTable tableName: String) {
+    class func deleteModel(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.operateByMirror(object: object) { [weak sqliteDataBase](sqlMirrorModels) in
@@ -125,7 +125,7 @@ class SQLiteDataBase: NSObject {
                     continue
                 }
                 
-                guard key == pkid else {
+                guard key == sqlMirrorModel.primaryKey else {
                     continue
                 }
                 
@@ -179,8 +179,9 @@ extension SQLiteDataBase {
         //创建表
         var sqlStr = "CREATE TABLE IF NOT EXISTS " + tableFinalName
         
-        //添加主键
-        sqlStr += "(" + pkid + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
+
+        //主键
+        var primaryKey = ""
         
         //拼接动态字段
         var keyStr = ""
@@ -190,14 +191,21 @@ extension SQLiteDataBase {
                 continue
             }
             
-            //如果是pkid 就返回
-            guard key != pkid else {
+            let forprimaryKey = sqlMirrorModel.primaryKey
+            
+            //如果是primaryKey 就返回
+            guard key != forprimaryKey else {
+                primaryKey = forprimaryKey!
                 continue
             }
             
             keyStr += "\(key) \(SQLiteDataBaseTool.sqlType(type)),"
             
         }
+
+        //添加主键
+        sqlStr += "(" + primaryKey + " INTEGER UNIQUE PRIMARY KEY NOT NULL,"
+        
         sqlStr += SQLiteDataBaseTool.removeLastStr(keyStr)
         
         sqlStr += ")"
@@ -210,7 +218,7 @@ extension SQLiteDataBase {
     /// - Parameters:
     ///   - object: object
     ///   - tableName: 需要插入的tableName
-    func insert(object: Any, intoTable tableName: String) {
+    func insert(object: SQLiteModel, intoTable tableName: String) {
         
         operateByMirror(object: object) { [weak self](sqlMirrorModels) in
             guard let strongSelf = self else{
@@ -244,7 +252,7 @@ extension SQLiteDataBase {
     /// - Parameters:
     ///   - object: 需要修改的object
     ///   - tableName: talbeName
-    func update(_ object: Any,fromTable tableName: String) {
+    func update(_ object: SQLiteModel,fromTable tableName: String) {
         operateByMirror(object: object) { [weak self](sqlMirrorModels) in
             guard let strongSelf = self else{
                 return
@@ -257,18 +265,20 @@ extension SQLiteDataBase {
             
             for sqlMirrorModel in sqlMirrorModels {
                 
-                guard let key = sqlMirrorModel.key,let value = sqlMirrorModel.value else {
+                guard let key = sqlMirrorModel.key else {
                     continue
                 }
                 
-                strongSelf.sqlitePrint("key:\(key),pkid:\(pkid)")
-                guard key != pkid else {
-                    whereStr = "\(key) = '\(value)'"
+                let value = sqlMirrorModel.value
+                let primaryKey = sqlMirrorModel.primaryKey
+                strongSelf.sqlitePrint("key:\(key),pkid:\(String(describing: primaryKey))")
+                guard key != primaryKey else {
+                    whereStr = "\(key) = '\(String(describing: value))'"
                     continue
                 }
                 
                 // setstr
-                let tmpStr = "\(key) = '\(value)' ,"
+                let tmpStr = "\(key) = '\(String(describing: value))' ,"
                 
                 setStr += tmpStr
             }
@@ -421,13 +431,13 @@ extension SQLiteDataBase {
         
     }
     
-    
-    /// 通过反射转换成对应的数据
+    //modify_future
+    /// 通过反射转换成对应的数据，以后不使用闭包了，很不方便
     ///
     /// - Parameters:
     ///   - object: 传入的objc
     ///   - mirrorFinish: 反射结束后的闭包
-    func operateByMirror(object: Any,mirrorFinish:(_ sqlMirrorModel:[SQLMirrorModel])->()){
+    func operateByMirror(object: SQLiteModel,mirrorFinish:(_ sqlMirrorModel:[SQLMirrorModel])->()){
         let mirror = Mirror(reflecting: object)
         
         guard let displayStyle = mirror.displayStyle else {
@@ -450,6 +460,14 @@ extension SQLiteDataBase {
                 mirrorModel.key = key
                 mirrorModel.value = value as AnyObject
                 mirrorModel.type = vMirror.subjectType
+                
+                if object.primaryKey() == key {
+                    mirrorModel.primaryKey = key
+                }
+                
+                guard object.ignoreKeys().contains(key) == false else {
+                    continue
+                }
                 
                 sqlMirrorModels.append(mirrorModel)
             }
