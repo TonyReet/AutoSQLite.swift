@@ -20,6 +20,7 @@
 		186965F01EC46A7E00B6D2F9 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 186965E71EC4699E00B6D2F9 /* SQLite.framework */; };
 		186965F11EC46A7E00B6D2F9 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 186965E71EC4699E00B6D2F9 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		186965F41EC5B20500B6D2F9 /* SQLiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */; };
+		186965F61EC94C2300B6D2F9 /* SQLPropertyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965F51EC94C2200B6D2F9 /* SQLPropertyModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,7 @@
 		186965EC1EC46A0D00B6D2F9 /* SQLMirrorModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLMirrorModel.swift; sourceTree = "<group>"; };
 		186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDataBaseTool.swift; sourceTree = "<group>"; };
 		186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteModel.swift; sourceTree = "<group>"; };
+		186965F51EC94C2200B6D2F9 /* SQLPropertyModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLPropertyModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +161,7 @@
 				186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */,
 				186965EA1EC469EF00B6D2F9 /* SQLiteDataBase.swift */,
 				186965EC1EC46A0D00B6D2F9 /* SQLMirrorModel.swift */,
+				186965F51EC94C2200B6D2F9 /* SQLPropertyModel.swift */,
 				186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */,
 			);
 			path = Source;
@@ -307,6 +310,7 @@
 				186965ED1EC46A0D00B6D2F9 /* SQLMirrorModel.swift in Sources */,
 				186965EF1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift in Sources */,
 				186965F41EC5B20500B6D2F9 /* SQLiteModel.swift in Sources */,
+				186965F61EC94C2300B6D2F9 /* SQLPropertyModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
