@@ -7,6 +7,11 @@ SQLite.swift的封装，使用swift的反射原理，Model直接存储.获取. �
 **<mark>更新内容:</mark>**
 
 
+----------------- 2017.5.27更新 -------------
+
+1、所有操作基于model，增删改查都是基于Model的主键进行操作的，此版本以后就可以正常使用所有功能了。
+
+
 ----------------- 2017.5.11更新 -------------
 
 1、首次提交代码，很多地方不完善，暂时自己使用，瞧上的可以尝尝鲜
@@ -16,42 +21,74 @@ SQLite.swift的封装，使用swift的反射原理，Model直接存储.获取. �
 - 1、引入source目录下的文件文件:
 
 ```
+SQLiteModel.swift
 SQLiteDataBase.swift
 SQLiteDataBaseTool.swift
 SQLMirrorModel.swift
+SQLPropertyModel.swift
+
+创建model继承SQLiteModel即可
 ```
 - 2、使用以下方法
 
 ```
         // 创建db
-        let manager: SQLiteDataBase = SQLiteDataBase.create(withDBName: "testDB")
+        SQLiteDataBase.createDB("statementDB")
 ```
 
 ```
-        let student = TestModel()
-        
         // 插入
-        manager.insert(object: student, intoTable: "testTable")
+        manager?.insert(object: testModel, intoTable: "statementTable")
+        
+        或者
+        
+        SQLiteDataBase.insert(object: testModel, intoTable: "statementTable")
 ```
 
 ```     
         // 删除
-        manager.delete(fromTable: "testTable", sqlWhere: "pkid = 2")
+        manager?.delete(testModel, fromTable: "statementTable")
+        
+        或者
+        
+        SQLiteDataBase.deleteModel(testModel, fromTable: "statementTable")
         
 ```
 
 ```
         // 更新
-        student.name = "lilei"
-        manager.update(student, fromTable: "testTable")
+        testModel.name = "Reet"
+
+        manager?.update(testModel, fromTable: "statementTable")
+        
+        或者
+        
+        SQLiteDataBase.update(testModel, fromTable: "statementTable")
 ```
 
 ```
         // 查询
-        let results = manager.select(fromTable: "testTable", sqlWhere: "pkid = 1")
+        guard let results = manager?.select(testModel, fromTable: "statementTable") else {
+            print("没有查询到数据")
+            return
+        }
+
         for result in results {
             print("查询的数据\(result)")
         }
+        
+        或者
+        
+        let results = SQLiteDataBase.select(testModel, fromTable: "statementTable")
+
+        if results.count > 0{
+            for result in results {
+                print("查询的数据\(result)")
+            }
+        }else {
+            print("没有查询到数据")
+        }
+
 ```
 
 ### TODO:
@@ -65,5 +102,5 @@ SQLMirrorModel.swift
 
 有任何疑问或建议. 欢迎在github或微博里issue我. 
 微博:[@TonyReet](http://weibo.com/u/3648931023)
-
+QQ:20130639  
 

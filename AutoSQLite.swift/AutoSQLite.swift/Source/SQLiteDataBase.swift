@@ -351,6 +351,39 @@ extension SQLiteDataBase {
         self.execute(sqlStr)
     }
     
+    func delete(_ object: SQLiteModel,fromTable tableName: String) {
+        if tableExists(tableName: tableName) == false {
+            return
+        }
+        
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
+            return
+        }
+        
+        self.createTable(tableName,sqlMirrorModel:sqlMirrorModel)
+        
+        var whereStr:String?
+        
+        for sqlPropertie in sqlMirrorModel.sqlProperties {
+            
+            let key = sqlPropertie.key
+            let value = sqlPropertie.value
+            let primaryKey = sqlMirrorModel.sqlPrimaryKey
+            
+            self.sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
+            guard key != primaryKey else {
+                whereStr = "\(key) = '\(String(describing: value))'"
+                continue
+            }
+        }
+        
+        if let whereStr = whereStr {
+            self.delete(fromTable: tableName, sqlWhere: whereStr)
+        }else{
+            sqlitePrint("没有找到对应的主键")
+        }
+    }
+    
     /// 删除整张表
     ///
     /// - Parameter tableName: 删除的表名

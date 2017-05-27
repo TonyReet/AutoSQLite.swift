@@ -103,41 +103,46 @@ extension SQLiteOperateVc{
     }
     
     func insertStatement() {
-//        manager?.insert(object: testModel, intoTable: "statementTable")
+        manager?.insert(object: testModel, intoTable: "statementTable")
         
-        SQLiteDataBase.insert(object: testModel, intoTable: "statementTable")
+//        SQLiteDataBase.insert(object: testModel, intoTable: "statementTable")
     }
     
     
     func updateStatement() {
         testModel.name = "Reet"
-//        manager?.update(testModel, fromTable: "statementTable")
+        manager?.update(testModel, fromTable: "statementTable")
         
-        SQLiteDataBase.update(testModel, fromTable: "statementTable")
+//        SQLiteDataBase.update(testModel, fromTable: "statementTable")
     }
     
     
     func deleteStatement() {
-//        manager?.delete(fromTable: "statementTable", sqlWhere: "pkid = 2")
-        SQLiteDataBase.deleteModel(testModel, fromTable: "statementTable")
+        manager?.delete(testModel, fromTable: "statementTable")
+        
+//        SQLiteDataBase.deleteModel(testModel, fromTable: "statementTable")
     }
     
     
     func selectStatement() {
-//        guard let results = manager?.select(fromTable: "statementTable", sqlWhere: "pkid = 1") else {
-//            print("没有查询到数据")
-//            return
-//        }
-
-        let results = SQLiteDataBase.select(testModel, fromTable: "statementTable")
-
-        if results.count > 0{
-            for result in results {
-                print("查询的数据\(result)")
-            }
-        }else {
+        guard let results = manager?.select(testModel, fromTable: "statementTable") else {
             print("没有查询到数据")
+            return
         }
+
+        for result in results {
+            print("查询的数据\(result)")
+        }
+        
+//        let results = SQLiteDataBase.select(testModel, fromTable: "statementTable")
+//
+//        if results.count > 0{
+//            for result in results {
+//                print("查询的数据\(result)")
+//            }
+//        }else {
+//            print("没有查询到数据")
+//        }
     }
     
     
