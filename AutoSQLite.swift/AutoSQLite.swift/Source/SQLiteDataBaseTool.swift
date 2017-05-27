@@ -8,9 +8,10 @@
 
 import Foundation
 
+
+
+/// 工具类
 class SQLiteDataBaseTool: NSObject{
-    
-    
     /// 将原生的类型转换成sql类型
     ///
     /// - Parameter type: 原生类型

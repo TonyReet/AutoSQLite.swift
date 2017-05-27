@@ -8,64 +8,34 @@
 
 import UIKit
 
-class TestModel: SQLiteModel {
-    var name = "hanmeimei"
-    var age  = 18
-    var pkid = 1//PRIMARY KEY ID
-    
-    var ignore: String = ""//需要忽略的属性
-    
-    //后面需要支持的类型
-//    var optionalString : String?
-//    var optionalInt : Int?
-//    
-//    var optionaldate:NSDate?
-//    var optionalisTest:Bool?
-//    var optionalDouble:Double?
-//    var optionalFloat:Float?
-//    var testModels:[TestModel]? = []
-    
-    
-    override func primaryKey() -> String {
-        return "pkid"
-    }
-    
-    override func ignoreKeys() -> [String] {
-        return ["ignore"]
-    }
-    
-}
-
 class ViewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+//    @IBAction func statementAction(_ sender: Any) {
+//        let operateVc = SQLiteOperateVc()
+//        operateVc.operateType = .statement
+//        
+//        self.present(operateVc, animated: true, completion: nil)
+//    }
+//    
+//    
+//    @IBAction func wrapperAction(_ sender: Any) {
+//
+//    }
+//    
 
-        // 创建db
-        let manager: SQLiteDataBase = SQLiteDataBase.createDB("testDB")
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVc = segue.destination as! SQLiteOperateVc
         
-        let student = TestModel()
-        
-        // 插入
-        manager.insert(object: student, intoTable: "testTable")
-        
-        // 删除
-        manager.delete(fromTable: "testTable", sqlWhere: "pkid = 2")
-        
-        // 更新
-        student.name = "lilei"
-        manager.update(student, fromTable: "testTable")
-        
-        // 查询
-        let results = manager.select(fromTable: "testTable", sqlWhere: "pkid = 1")
-        for result in results {
-            print("查询的数据\(result)")
+        if segue.identifier == "statement" {
+            destinationVc.operateType = .statement
+        }else if segue.identifier == "wrapper" {
+            let alertController = UIAlertController(title: "提示", message: "暂不支持，稍候会加入该功能", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil )
+            
+            alertController.addAction(cancelAction);
+            present(alertController, animated: true, completion: nil)
+//            destinationVc.operateType = .wrapper
         }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 }
 

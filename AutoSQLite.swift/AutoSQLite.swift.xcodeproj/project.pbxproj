@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		183CE29F1ED82539001970A6 /* TestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183CE29E1ED82539001970A6 /* TestModel.swift */; };
+		183CE2A11ED8253E001970A6 /* SQLiteOperateVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183CE2A01ED8253E001970A6 /* SQLiteOperateVc.swift */; };
 		186965BA1EC4697C00B6D2F9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965B91EC4697C00B6D2F9 /* AppDelegate.swift */; };
 		186965BC1EC4697C00B6D2F9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965BB1EC4697C00B6D2F9 /* ViewController.swift */; };
 		186965BF1EC4697C00B6D2F9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 186965BD1EC4697C00B6D2F9 /* Main.storyboard */; };
@@ -55,6 +57,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		183CE29E1ED82539001970A6 /* TestModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestModel.swift; sourceTree = "<group>"; };
+		183CE2A01ED8253E001970A6 /* SQLiteOperateVc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteOperateVc.swift; sourceTree = "<group>"; };
 		186965B61EC4697C00B6D2F9 /* AutoSQLite.swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutoSQLite.swift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		186965B91EC4697C00B6D2F9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		186965BB1EC4697C00B6D2F9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -129,6 +133,8 @@
 				186965E91EC469D700B6D2F9 /* Source */,
 				186965B91EC4697C00B6D2F9 /* AppDelegate.swift */,
 				186965BB1EC4697C00B6D2F9 /* ViewController.swift */,
+				183CE2A01ED8253E001970A6 /* SQLiteOperateVc.swift */,
+				183CE29E1ED82539001970A6 /* TestModel.swift */,
 				186965BD1EC4697C00B6D2F9 /* Main.storyboard */,
 				186965C01EC4697C00B6D2F9 /* Assets.xcassets */,
 				186965C21EC4697C00B6D2F9 /* LaunchScreen.storyboard */,
@@ -160,9 +166,9 @@
 			children = (
 				186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */,
 				186965EA1EC469EF00B6D2F9 /* SQLiteDataBase.swift */,
+				186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */,
 				186965EC1EC46A0D00B6D2F9 /* SQLMirrorModel.swift */,
 				186965F51EC94C2200B6D2F9 /* SQLPropertyModel.swift */,
-				186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -304,9 +310,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				183CE2A11ED8253E001970A6 /* SQLiteOperateVc.swift in Sources */,
 				186965BC1EC4697C00B6D2F9 /* ViewController.swift in Sources */,
 				186965EB1EC469EF00B6D2F9 /* SQLiteDataBase.swift in Sources */,
 				186965BA1EC4697C00B6D2F9 /* AppDelegate.swift in Sources */,
+				183CE29F1ED82539001970A6 /* TestModel.swift in Sources */,
 				186965ED1EC46A0D00B6D2F9 /* SQLMirrorModel.swift in Sources */,
 				186965EF1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift in Sources */,
 				186965F41EC5B20500B6D2F9 /* SQLiteModel.swift in Sources */,

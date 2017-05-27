@@ -8,8 +8,10 @@
 
 import Foundation
 
-class SQLMirrorModel: NSObject {
 
+
+/// 反射保存属性的model
+class SQLMirrorModel: NSObject {
     
     public var sqlProperties : [SQLPropertyModel] = []
     

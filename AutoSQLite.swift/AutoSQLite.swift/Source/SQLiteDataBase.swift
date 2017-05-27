@@ -9,6 +9,8 @@
 import Foundation
 import SQLite
 
+
+
 class SQLiteDataBase: NSObject {
     //创建单例
     static let shared           = SQLiteDataBase()
@@ -26,7 +28,7 @@ class SQLiteDataBase: NSObject {
     
     // MARK: - 初始化
     // 初始化db
-    class func createDB(_ dataBaseName: String)->SQLiteDataBase {
+    class func createDB(_ dataBaseName: String,isRemoveOld: Bool? = false)->SQLiteDataBase {
         let sqliteDataBase = SQLiteDataBase.shared
         
         let defaultPath = sqliteDataBase.defaultPath()
@@ -93,13 +95,15 @@ class SQLiteDataBase: NSObject {
     
     // MARK: - 查询数据
     class func selectAll(fromTable tableName: String)->[[String:AnyObject]]{
-        return self.select(fromTable:tableName,sqlWhere: nil)
-    }
-    
-    class func select(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
-        return sqliteDataBase.select(fromTable:tableName,sqlWhere: sqlWhere)
+        return sqliteDataBase.select(fromTable:tableName,sqlWhere: nil)
+    }
+    
+    class func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
+        let sqliteDataBase = SQLiteDataBase.shared
+        
+        return sqliteDataBase.select(object,fromTable:tableName)
     }
     
     
@@ -250,7 +254,7 @@ extension SQLiteDataBase {
             let value = sqlPropertie.value
             let primaryKey = sqlMirrorModel.sqlPrimaryKey
             
-            self.sqlitePrint("key:\(key),pkid:\(String(describing: primaryKey))")
+            self.sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
             guard key != primaryKey else {
                 whereStr = "\(key) = '\(String(describing: value))'"
                 continue
@@ -293,6 +297,46 @@ extension SQLiteDataBase {
         return results
     }
     
+    func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
+        if tableExists(tableName: tableName) == false {
+            return [[String:AnyObject]]()
+        }
+        
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
+            return [[String:AnyObject]]()
+        }
+        
+        self.createTable(tableName,sqlMirrorModel:sqlMirrorModel)
+        
+        var whereStr:String?
+        
+        for sqlPropertie in sqlMirrorModel.sqlProperties {
+            
+            let key = sqlPropertie.key
+            let value = sqlPropertie.value
+            let primaryKey = sqlMirrorModel.sqlPrimaryKey
+            
+            self.sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
+            guard key != primaryKey else {
+                whereStr = "\(key) = '\(String(describing: value))'"
+                continue
+            }
+        }
+
+        var sqlStr = ""
+        if let whereStr = whereStr {
+            sqlStr = "SELECT * FROM \(tableName) WHERE \(whereStr)"
+        }else{
+            sqlStr = "SELECT * FROM \(tableName)"
+        }
+        
+        let results = prepare(sqlStr)
+        
+        self.sqlitePrint("sqlStr:\(sqlStr)")
+        
+        return results
+    }
+    
     /// 删除table里面的字段
     ///
     /// - Parameters:
@@ -322,7 +366,7 @@ extension SQLiteDataBase {
     
     
     // MARK: - Tool Func
-    // 检查tableName是否不合法
+    // 检查tableName是否有效
     func checkNameIsVerify(_ name: String) -> Bool {
         if name.characters.count == 0 {
             sqlitePrint("name: \(name) format error")
@@ -360,7 +404,6 @@ extension SQLiteDataBase {
     ///   - fail: 失败的闭包
     func execute(_ sqlStr:String,finish:()->() = { _ in },fail:()->() = { _ in }){
         do {
-            
             sqlitePrint("sql语句:\(sqlStr)")
             try database?.execute(sqlStr)
             finish()
@@ -377,36 +420,37 @@ extension SQLiteDataBase {
     /// - Returns: 返回查询的数据，因为可能是多个，并且每个都以字典类型返回
     /// - 所以是数据类型是[[String:AnyObject]],[String:AnyObject]是字典类型
     func prepare(_ sqlStr: String)->[[String:AnyObject]]{
-        let results = try! self.database?.prepare(sqlStr)
-        
         var elements:[[String:AnyObject]] = []
         
-        if let results = results{
+        do {
+            let results = try self.database?.prepare(sqlStr)
             
-            let colunmSize = results.columnNames.count
-            
-            for row in results  {
-                var record:[String: AnyObject] = [:]
+            if let results = results{
                 
-                for i in 0..<colunmSize {
+                let colunmSize = results.columnNames.count
+                
+                for row in results  {
+                    var record:[String: AnyObject] = [:]
                     
-                    let value   = row[i]
-                    let key     = results.columnNames[i] as String
-                    
-                    if let value = value {
-                        record.updateValue(value as AnyObject, forKey: key)
+                    for i in 0..<colunmSize {
+                        
+                        let value   = row[i]
+                        let key     = results.columnNames[i] as String
+                        
+                        if let value = value {
+                            record.updateValue(value as AnyObject, forKey: key)
+                        }
+                        
                     }
                     
+                    elements.append(record)
                 }
-                
-                elements.append(record)
             }
-            return elements
-            
-        }else{
-            return elements
+        } catch {
+            print(error)
         }
         
+        return elements
     }
     
    

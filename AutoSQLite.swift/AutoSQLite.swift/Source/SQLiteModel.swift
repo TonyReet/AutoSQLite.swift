@@ -11,7 +11,7 @@ import Foundation
 //modify_future
 /// 先使用这个基类进行操作，后续这个基类需要改为protocol
 
-/// 所有类都需要加入init
+/// 基类
 class SQLiteModel: NSObject {
     
     func primaryKey() -> String {
