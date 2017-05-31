@@ -7,8 +7,11 @@
 //
 
 import Foundation
+import SQLite
 
 
+//modify_future
+/// 这个类的功能要逐渐去掉到没有
 
 /// 工具类
 class SQLiteDataBaseTool: NSObject{

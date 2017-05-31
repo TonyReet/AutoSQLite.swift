@@ -10,11 +10,7 @@ import UIKit
 
 //SQL 语句操作的vc
 class SQLiteOperateVc: UIViewController {
-    enum SQLiteOperateType: Int {
-        case statement = 0//sql语句操作的类型
-        case wrapper = 1//sqlite封装的类型(SQLite.Swift封装的类型)
-    }
-
+    
     var operateType: SQLiteOperateType = .statement
 
     // 创建db
@@ -103,7 +99,7 @@ extension SQLiteOperateVc{
     }
     
     func insertStatement() {
-        manager?.insert(object: testModel, intoTable: "statementTable")
+        manager?.insert(testModel , intoTable: "statementTable")
         
 //        SQLiteDataBase.insert(object: testModel, intoTable: "statementTable")
     }
@@ -120,7 +116,7 @@ extension SQLiteOperateVc{
     func deleteStatement() {
         manager?.delete(testModel, fromTable: "statementTable")
         
-//        SQLiteDataBase.deleteModel(testModel, fromTable: "statementTable")
+//        SQLiteDataBase.delete(testModel, fromTable: "statementTable")
     }
     
     

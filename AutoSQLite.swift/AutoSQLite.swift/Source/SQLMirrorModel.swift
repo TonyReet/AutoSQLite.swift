@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import SQLite
 
 
 /// 反射保存属性的model
@@ -18,10 +18,11 @@ class SQLMirrorModel: NSObject {
     //主键
     public var sqlPrimaryKey : String
     
-
+    
     init(primaryKey:String, properties:[SQLPropertyModel]) {
         sqlPrimaryKey = primaryKey
         sqlProperties = properties
+
     }
     
     
