@@ -156,14 +156,7 @@ class SQLiteDataBase: NSObject {
     }
     
     class func deleteWhere(_ sqlWhere: String,fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
-            deleteWhere_statement(sqlWhere,fromTable:tableName)
-        case .wrapper:
-            deleteWhere_wrapper(sqlWhere,fromTable:tableName)
-        }
+        deleteWhere_statement(sqlWhere,fromTable:tableName)
     }
     
     class func drop(dropTable tableName: String){
@@ -230,12 +223,7 @@ class SQLiteDataBase: NSObject {
     ///   - sqlWhere: sql查询语句
     /// - Returns: 返回结果
     func select(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
-        switch self.operateType {
-        case .statement:
-            return select_statement(fromTable:tableName,sqlWhere: sqlWhere)
-        case .wrapper:
-            return select_wrapper(fromTable:tableName,sqlWhere: sqlWhere)
-        }
+        return select_statement(fromTable:tableName,sqlWhere: sqlWhere)
     }
     
     func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
@@ -253,12 +241,7 @@ class SQLiteDataBase: NSObject {
     ///   - tableName: table
     ///   - sqlWhere: 执行的where语句
     func delete(fromTable tableName: String,sqlWhere: String) {
-        switch self.operateType {
-        case .statement:
-            delete_statement(fromTable:tableName,sqlWhere:sqlWhere)
-        case .wrapper:
-            delete_wrapper(fromTable:tableName,sqlWhere:sqlWhere)
-        }
+        delete_statement(fromTable:tableName,sqlWhere:sqlWhere)
     }
     
     func delete(_ object: SQLiteModel,fromTable tableName: String) {
@@ -735,7 +718,7 @@ extension SQLiteDataBase {
     class func selectAll_wrapper(fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
-        return sqliteDataBase.select_wrapper(fromTable:tableName,sqlWhere: nil)
+        return sqliteDataBase.select_wrapper(fromTable:tableName)
     }
     
     class func select_wrapper(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
@@ -758,16 +741,11 @@ extension SQLiteDataBase {
                 continue
             }
             
-            sqliteDataBase.delete_wrapper(fromTable: tableName,sqlWhere: "\(key) = '\(sqlPropertie.value)'")
+            sqliteDataBase.delete_wrapper(object, fromTable: tableName)
         }
     }
     
-    class func deleteWhere_wrapper(_ sqlWhere: String,fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        sqliteDataBase.delete_wrapper(fromTable: tableName,sqlWhere: sqlWhere)
-    }
-    
+
     class func drop_wrapper(dropTable tableName: String){
         let sqliteDataBase = SQLiteDataBase.shared
         sqliteDataBase.drop_wrapper(dropTable:tableName)
@@ -810,6 +788,10 @@ extension SQLiteDataBase {
     }
     
     func save_wrapper(_ object: SQLiteModel,intoTable tableName: String){
+        if tableExists(tableName: tableName) == false {
+            return
+        }
+        
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return
         }
@@ -830,11 +812,9 @@ extension SQLiteDataBase {
         }
         
         do {
-            
             guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let firstModel = firstModel else {
                 return
             }
-            
             
             let filterTable = dataBaseTable.filter(firstModel.sqlFilter(object))
             
@@ -848,113 +828,131 @@ extension SQLiteDataBase {
         }
     }
     
-    func select_wrapper(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
-        if tableExists(tableName: tableName) == false {
-            return [[String:AnyObject]]()
-        }
-        
-        var sqlStr = ""
-        
-        if let sqlWhere = sqlWhere {
-            sqlStr = "SELECT * FROM \(tableName) WHERE \(sqlWhere)"
-        }else{
-            sqlStr = "SELECT * FROM \(tableName)"
-        }
-        
-        let results = prepare(sqlStr)
-        
-        return results
-    }
+
     
-    func select_wrapper(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
+    func select_wrapper(_ object: SQLiteModel? = nil,fromTable tableName: String)->[[String:AnyObject]] {
+        var results = [[String:AnyObject]]()
+        
         if tableExists(tableName: tableName) == false {
-            return [[String:AnyObject]]()
+            return results
         }
         
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return [[String:AnyObject]]()
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: SQLiteModel()) else {
+            return results
         }
         
-        createTable(tableName,sqlMirrorModel:sqlMirrorModel)
+        let modelResults: [SQLiteModel] = select_wrapper_model(object, fromTable: tableName)
         
-        var whereStr:String?
-        
-        for sqlPropertie in sqlMirrorModel.sqlProperties {
+        //为了保持统一
+        for modelResult in modelResults {
+
+            var result = [String:AnyObject]()
             
-            let key = sqlPropertie.key
-            let value = sqlPropertie.value
-            let primaryKey = sqlMirrorModel.sqlPrimaryKey
-            
-            sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
-            guard key != primaryKey else {
-                whereStr = "\(key) = '\(String(describing: value))'"
-                continue
+            for sqlPropertie in sqlMirrorModel.sqlProperties {
+                result[sqlPropertie.key] = modelResult.value(forKey: sqlPropertie.key) as AnyObject
             }
+            
+            results.append(result)
         }
         
-        var sqlStr = ""
-        if let whereStr = whereStr {
-            sqlStr = "SELECT * FROM \(tableName) WHERE \(whereStr)"
-        }else{
-            sqlStr = "SELECT * FROM \(tableName)"
+        return results
+
+    }
+    
+    func select_wrapper_model(_ object: SQLiteModel? = nil ,fromTable tableName: String)->[SQLiteModel] {
+        var results = [SQLiteModel]()
+        if tableExists(tableName: tableName) == false {
+            return results
         }
         
-        let results = prepare(sqlStr)
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: SQLiteModel()) else {
+            return results
+        }
         
-        sqlitePrint("sqlStr:\(sqlStr)")
+        createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
+        
+        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
+        
+        guard let dataBaseTable:Table = dataBaseTables[tableFinalName] else {
+            return results
+        }
+        
+        do {
+            guard let datas = try database?.prepare(dataBaseTable) else {
+                return results
+            }
+            
+            for data in datas {
+                let sqLiteModel = SQLiteModel()
+                for sqlPropertie in sqlMirrorModel.sqlProperties {
+                    sqlPropertie.sqlRowToModel(sqLiteModel, row: data)
+                }
+                
+                if  let object = object,let sqLitePriKey = sqLiteModel.value(forKey: sqLiteModel.primaryKey()) as? String,let objPriKey = object.value(forKey: sqLiteModel.primaryKey()) as? String {
+                    //只提取primaryKey一致的数据
+                    if sqLitePriKey == objPriKey{
+                        results.append(sqLiteModel)
+                    }
+                }else{
+                    results.append(sqLiteModel)
+                }
+            }
+            
+            
+        } catch {
+            print(error)
+        }
         
         return results
     }
     
-    func delete_wrapper(fromTable tableName: String,sqlWhere: String) {
-        if tableExists(tableName: tableName) == false {
-            return
-        }
-        
-        let sqlStr = "DELETE FROM \(tableName) WHERE \(sqlWhere)"
-        execute(sqlStr)
-    }
-    
+
     func delete_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
         if tableExists(tableName: tableName) == false {
             return
         }
         
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: SQLiteModel()) else {
             return
         }
         
-        createTable(tableName,sqlMirrorModel:sqlMirrorModel)
+        createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
         
-        var whereStr:String?
+        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
+        
+        var firstModel:SQLPropertyModel!
         
         for sqlPropertie in sqlMirrorModel.sqlProperties {
-            
-            let key = sqlPropertie.key
-            let value = sqlPropertie.value
-            let primaryKey = sqlMirrorModel.sqlPrimaryKey
-            
-            sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
-            guard key != primaryKey else {
-                whereStr = "\(key) = '\(String(describing: value))'"
-                continue
+            if firstModel == nil {
+                firstModel = sqlPropertie
             }
         }
         
-        if let whereStr = whereStr {
-            delete(fromTable: tableName, sqlWhere: whereStr)
-        }else{
-            sqlitePrint("没有找到对应的主键")
+        do {
+            guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let firstModel = firstModel else {
+                return
+            }
+            
+            let filterTable = dataBaseTable.filter(firstModel.sqlFilter(object))
+            _ = try database?.run(filterTable.delete())
+        } catch {
+            print(error)
         }
     }
     
     func drop_wrapper(dropTable tableName: String) {
-        if tableExists(tableName: tableName) == false {
+        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
+        
+        guard let dataBaseTable:Table = dataBaseTables[tableFinalName] else {
             return
         }
         
-        let sqlStr = "DROP FROM \(tableName)"
-        execute(sqlStr)
+        do {
+            _ = try database?.run(dataBaseTable.drop(ifExists: true))
+        } catch {
+            print(error)
+        }
+
     }
 }
 
