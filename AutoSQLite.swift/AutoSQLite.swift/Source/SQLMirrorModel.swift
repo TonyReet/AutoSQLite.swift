@@ -51,12 +51,14 @@ class SQLMirrorModel: NSObject {
             
             if let key = child.label { //注意字典只能保存AnyObject类型。
                 
-                let mirrorModel = SQLPropertyModel(type: vMirror.subjectType,key:key,value:value as AnyObject)
-
+                var isPrimaryKey = false
                 if object.primaryKey() == key {
                     primaryKey = key
+                    isPrimaryKey = true
                 }
-                
+
+                let mirrorModel = SQLPropertyModel(type: vMirror.subjectType,key:key,value:value as AnyObject, isPrimaryKey: isPrimaryKey)
+
                 guard object.ignoreKeys().contains(key) == false else {
                     continue
                 }

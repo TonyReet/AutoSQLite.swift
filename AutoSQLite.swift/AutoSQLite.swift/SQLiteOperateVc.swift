@@ -11,7 +11,11 @@ import UIKit
 //SQL 语句操作的vc
 class SQLiteOperateVc: UIViewController {
     
-    var operateType: SQLiteOperateType = .statement
+    var operateType: SQLiteOperateType = .statement{
+        didSet{
+            SQLiteDataBase.shared.operateType = self.operateType
+        }
+    }
 
     // 创建db
     var manager: SQLiteDataBase?
@@ -20,62 +24,34 @@ class SQLiteOperateVc: UIViewController {
     var testModel = TestModel()
     
 
+    let sqlTableName = "testTable"
+    
     @IBAction func createAction() {
-        switch operateType {
-        case .statement:
-            createStatement()
-        case .wrapper:
-            createWrapper()
-        }
+        createOperate()
     }
     
     @IBAction func insertAction() {
-        switch operateType {
-        case .statement:
-            insertStatement()
-        case .wrapper:
-            insertWrapper()
-        }
+        insertOperate()
     }
     
     
     @IBAction func updateAction() {
-        switch operateType {
-        case .statement:
-            updateStatement()
-        case .wrapper:
-            updateWrapper()
-        }
+        updateOperate()
     }
     
     
     @IBAction func deleteAction() {
-        switch operateType {
-        case .statement:
-            deleteStatement()
-        case .wrapper:
-            deleteWrapper()
-        }
+        deleteOperate()
     }
     
     
     @IBAction func selectAction() {
-        switch operateType {
-        case .statement:
-            selectStatement()
-        case .wrapper:
-            selectWrapper()
-        }
+        selectOperate()
     }
     
     
     @IBAction func dropAction() {
-        switch operateType {
-        case .statement:
-            dropStatement()
-        case .wrapper:
-            dropWrapper()
-        }
+        dropOperate()
     }
     
     
@@ -89,8 +65,15 @@ class SQLiteOperateVc: UIViewController {
 // MARK: - sql语句操作的方法
 extension SQLiteOperateVc{
     
-    func createStatement() {
-        manager = SQLiteDataBase.createDB("statementDB")
+    func createOperate() {
+        
+        var dataName = ""
+        if operateType == .statement {
+            dataName = "statementDB"
+        }else{
+            dataName = "wrapperDB"
+        }
+        manager = SQLiteDataBase.createDB(dataName)
         
         testModel.pkid      = 1
         testModel.age       = 18
@@ -98,30 +81,30 @@ extension SQLiteOperateVc{
         testModel.ignore    = "ignore"
     }
     
-    func insertStatement() {
-        manager?.insert(testModel , intoTable: "statementTable")
+    func insertOperate() {
+        manager?.insert(testModel , intoTable: sqlTableName)
         
 //        SQLiteDataBase.insert(object: testModel, intoTable: "statementTable")
     }
     
     
-    func updateStatement() {
+    func updateOperate() {
         testModel.name = "Reet"
-        manager?.update(testModel, fromTable: "statementTable")
+        manager?.update(testModel, fromTable: sqlTableName)
         
 //        SQLiteDataBase.update(testModel, fromTable: "statementTable")
     }
     
     
-    func deleteStatement() {
-        manager?.delete(testModel, fromTable: "statementTable")
+    func deleteOperate() {
+        manager?.delete(testModel, fromTable: sqlTableName)
         
 //        SQLiteDataBase.delete(testModel, fromTable: "statementTable")
     }
     
     
-    func selectStatement() {
-        guard let results = manager?.select(testModel, fromTable: "statementTable") else {
+    func selectOperate() {
+        guard let results = manager?.select(testModel, fromTable: sqlTableName),results.count > 0 else {
             print("没有查询到数据")
             return
         }
@@ -142,40 +125,7 @@ extension SQLiteOperateVc{
     }
     
     
-    func dropStatement() {
-        manager?.drop(dropTable: "statementTable")
+    func dropOperate() {
+        manager?.drop(dropTable: sqlTableName)
     }
 }
-
-
-
-extension SQLiteOperateVc{
-    func createWrapper() {
-        manager = SQLiteDataBase.createDB("wrapperDB")
-    }
-    
-    func insertWrapper() {
-        
-    }
-    
-    
-    func updateWrapper() {
-        
-    }
-    
-    
-    func deleteWrapper() {
-        
-    }
-    
-    
-    func selectWrapper() {
-        
-    }
-    
-    
-    func dropWrapper() {
-        
-    }
-}
-

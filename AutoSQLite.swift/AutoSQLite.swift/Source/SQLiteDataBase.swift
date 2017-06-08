@@ -342,6 +342,7 @@ extension SQLiteDataBase {
         return sqliteDataBase.select_statement(fromTable:tableName,sqlWhere: nil)
     }
     
+    
     class func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
@@ -362,7 +363,7 @@ extension SQLiteDataBase {
                 continue
             }
             
-            sqliteDataBase.delete_statement(fromTable: tableName,sqlWhere: "\(key) = '\(sqlPropertie.value)'")
+            sqliteDataBase.delete_statement(fromTable: tableName,sqlWhere: "\(key) = '\(String(describing: sqlPropertie.value))'")
         }
     }
     
@@ -441,7 +442,7 @@ extension SQLiteDataBase {
             let value = sqlPropertie.value
             
             keyStr += (key + " ,")
-            valueStr += ("'\(value)' ,")
+            valueStr += ("'\(String(describing: value))' ,")
         }
         
         keyStr = SQLiteDataBaseTool.removeLastStr(keyStr)
@@ -768,12 +769,18 @@ extension SQLiteDataBase {
         do {
             let dataBaseTable = Table(tableFinalName)
             
-            weak var weakSelf = self
-            _ = try database?.run(dataBaseTable.create(ifNotExists: true, block: { (t) in
-                if let strongSelf = weakSelf {
-                    strongSelf.dataBaseTables[tableFinalName] = dataBaseTable
-                }
-            }))
+            if let database = database {
+                weak var weakSelf = self
+                _ = try database.run(dataBaseTable.create(ifNotExists: true, block: { (tableBuilder) in
+                    if let strongSelf = weakSelf {
+                        for sqlPropertie in sqlMirrorModel.sqlProperties {
+                            sqlPropertie.sqlBuildRow(builder: tableBuilder, isPkid: sqlPropertie.isPrimaryKey)
+                        }
+                        
+                        strongSelf.dataBaseTables[tableFinalName] = dataBaseTable
+                    }
+                }))
+            }
         } catch {
             sqlitePrint("创建表失败: \(error)")
         }
@@ -788,35 +795,31 @@ extension SQLiteDataBase {
     }
     
     func save_wrapper(_ object: SQLiteModel,intoTable tableName: String){
-        if tableExists(tableName: tableName) == false {
-            return
-        }
-        
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return
         }
         
+
         createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
-        
         let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
         
         var sqlSetters:[Setter] = []
         
-        var firstModel:SQLPropertyModel?
+        var primaryKeyModel:SQLPropertyModel?
         
         for sqlPropertie in sqlMirrorModel.sqlProperties {
-            if firstModel == nil {
-                firstModel = sqlPropertie
+            if sqlPropertie.isPrimaryKey == true {
+                primaryKeyModel = sqlPropertie
             }
             sqlSetters.append(sqlPropertie.sqlSetter(object))
         }
         
         do {
-            guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let firstModel = firstModel else {
+            guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let primaryKeyModel = primaryKeyModel else {
                 return
             }
             
-            let filterTable = dataBaseTable.filter(firstModel.sqlFilter(object))
+            let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
             
             if let _ = try database?.pluck(filterTable) {//如果存在就更新
                 _ = try database?.run(filterTable.update(sqlSetters))
@@ -837,7 +840,11 @@ extension SQLiteDataBase {
             return results
         }
         
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: SQLiteModel()) else {
+        guard let object = object else {
+            return results
+        }
+
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return results
         }
         
@@ -859,18 +866,18 @@ extension SQLiteDataBase {
 
     }
     
-    func select_wrapper_model(_ object: SQLiteModel? = nil ,fromTable tableName: String)->[SQLiteModel] {
+    func select_wrapper_model(_ object: SQLiteModel,fromTable tableName: String)->[SQLiteModel] {
         var results = [SQLiteModel]()
         if tableExists(tableName: tableName) == false {
             return results
         }
         
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: SQLiteModel()) else {
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return results
         }
         
-        createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
         
+        createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
         let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
         
         guard let dataBaseTable:Table = dataBaseTables[tableFinalName] else {
@@ -882,13 +889,15 @@ extension SQLiteDataBase {
                 return results
             }
             
+            let classType:SQLiteModel.Type = type(of:object)
+
             for data in datas {
-                let sqLiteModel = SQLiteModel()
+                let sqLiteModel = classType.init()
                 for sqlPropertie in sqlMirrorModel.sqlProperties {
                     sqlPropertie.sqlRowToModel(sqLiteModel, row: data)
                 }
                 
-                if  let object = object,let sqLitePriKey = sqLiteModel.value(forKey: sqLiteModel.primaryKey()) as? String,let objPriKey = object.value(forKey: sqLiteModel.primaryKey()) as? String {
+                if  let sqLitePriKey = sqLiteModel.value(forKey: sqLiteModel.primaryKey()) as? String,let objPriKey = object.value(forKey: sqLiteModel.primaryKey()) as? String {
                     //只提取primaryKey一致的数据
                     if sqLitePriKey == objPriKey{
                         results.append(sqLiteModel)
@@ -920,20 +929,20 @@ extension SQLiteDataBase {
         
         let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
         
-        var firstModel:SQLPropertyModel!
+        var primaryKeyModel:SQLPropertyModel!
         
         for sqlPropertie in sqlMirrorModel.sqlProperties {
-            if firstModel == nil {
-                firstModel = sqlPropertie
+            if sqlPropertie.isPrimaryKey == true {
+                primaryKeyModel = sqlPropertie
             }
         }
         
         do {
-            guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let firstModel = firstModel else {
+            guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let primaryKeyModel = primaryKeyModel else {
                 return
             }
             
-            let filterTable = dataBaseTable.filter(firstModel.sqlFilter(object))
+            let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
             _ = try database?.run(filterTable.delete())
         } catch {
             print(error)
@@ -955,5 +964,3 @@ extension SQLiteDataBase {
 
     }
 }
-
-

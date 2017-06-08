@@ -13,6 +13,9 @@ import Foundation
 
 /// 基类
 class SQLiteModel: NSObject {
+    required override public init() {
+        super.init()
+    }
     
     func primaryKey() -> String {
         return ""
