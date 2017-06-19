@@ -4,6 +4,7 @@ SQLite.swift的封装，使用swift的反射原理，Model直接存储.获取. �
 [![](https://img.shields.io/badge/Supported-iOS8-4BC51D.svg?style=flat-square)](https://github.com/TonyReet/TYSnapshotScroll)
 [![](https://img.shields.io/badge/Swift-compatible-4BC51D.svg?style=flat-square)](https://github.com/TonyReet/TYSnapshotScroll)
 
+![png](Snapshot.png)
 
 ### 使用方法
 - 1、引入source目录下的文件文件:
