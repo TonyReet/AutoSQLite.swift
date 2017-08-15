@@ -86,7 +86,7 @@ SQLPropertyModel.swift
 2、支持使用protocol,减少代码的耦合
 2、支持pod,carthage
 ~~3、使用SQLite.swift的风格重写Model的直接操作~~
-4、增加insert和update的自动判断
+~~4、增加insert和update的自动判断~~
 
 你的star是我的动力
 

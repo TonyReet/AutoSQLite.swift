@@ -427,7 +427,38 @@ extension SQLiteDataBase {
         execute(sqlStr)
     }
     
+    func isExisit(_ object: SQLiteModel,tableName:String) -> Bool{
+        guard database != nil else {
+            return false
+        }
+
+        do {
+            //TODO: 主键暂定为Int
+            guard let pkidValue = object.value(forKey: object.primaryKey()) as? Int else {
+                return false
+            }
+            
+            let sqlStr = "SELECT COUNT(*) FROM \(tableName) where \(object.primaryKey()) = \(String(describing: pkidValue))"
+            
+            sqlitePrint("sql语句:\(sqlStr)")
+            let isExists = try database?.scalar(sqlStr) as! Int64 > 0
+            sqlitePrint("查询数据:\(isExists == true ? "存在" : "不存在")")
+            return isExists
+        }catch {
+            sqlitePrint(error)
+            return false
+        }
+    }
+    
     func insert_statement(_ object: SQLiteModel, intoTable tableName: String) {
+        save_statement(object,intoTable:tableName)
+    }
+
+    func update_statement(_ object: SQLiteModel,intoTable tableName: String) {
+        save_statement(object,intoTable:tableName)
+    }
+    
+    func save_statement(_ object: SQLiteModel,intoTable tableName: String) {
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return
         }
@@ -436,53 +467,46 @@ extension SQLiteDataBase {
         
         var keyStr   = ""
         var valueStr = ""
+
         for sqlPropertie in sqlMirrorModel.sqlProperties {
-            
             let key = sqlPropertie.key
-            let value = sqlPropertie.value
+            let oldValue = sqlPropertie.value
             
-            keyStr += (key + " ,")
-            valueStr += ("'\(String(describing: value))' ,")
+            guard let value = oldValue else {
+                continue
+            }
+            
+            if isExisit(object,tableName:tableName) == true {//存在
+
+                let primaryKey = sqlMirrorModel.sqlPrimaryKey
+                
+                sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
+                guard key != primaryKey else {
+                    valueStr = "\(key) = '\(value)'"
+                    continue
+                }
+                
+                // keyStr
+                let tmpStr = "\(key) = '\(value)' ,"
+                
+                keyStr += tmpStr
+            }else {//不存在
+                keyStr += (key + " ,")
+                valueStr += ("'\(value)' ,")
+            }
         }
         
         keyStr = SQLiteDataBaseTool.removeLastStr(keyStr)
         valueStr = SQLiteDataBaseTool.removeLastStr(valueStr)
         
-        let sqlStr = "INSERT INTO \(tableName) (\(keyStr)) VALUES (\(valueStr))"
-        execute(sqlStr)
-    }
-
-    func update_statement(_ object: SQLiteModel,intoTable tableName: String) {
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return
+        
+        var sqlStr = ""
+        if isExisit(object,tableName:tableName) == true {//存在
+            sqlStr = "UPDATE \(tableName) SET \(keyStr) WHERE \(valueStr)"
+        }else {//不存在
+            sqlStr = "INSERT INTO \(tableName) (\(keyStr)) VALUES (\(valueStr))"
         }
 
-        createTable_statement(tableName,sqlMirrorModel:sqlMirrorModel)
-        
-        var setStr   = ""
-        var whereStr = ""
-        
-        for sqlPropertie in sqlMirrorModel.sqlProperties {
-            
-            let key = sqlPropertie.key
-            let value = sqlPropertie.value
-            let primaryKey = sqlMirrorModel.sqlPrimaryKey
-            
-            sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
-            guard key != primaryKey else {
-                whereStr = "\(key) = '\(String(describing: value))'"
-                continue
-            }
-            
-            // setstr
-            let tmpStr = "\(key) = '\(String(describing: value))' ,"
-            
-            setStr += tmpStr
-        }
-        
-        setStr = SQLiteDataBaseTool.removeLastStr(setStr)
-        
-        let sqlStr = "UPDATE \(tableName) SET \(setStr) WHERE \(whereStr)"
         execute(sqlStr)
     }
     
@@ -521,7 +545,11 @@ extension SQLiteDataBase {
         for sqlPropertie in sqlMirrorModel.sqlProperties {
             
             let key = sqlPropertie.key
-            let value = sqlPropertie.value
+
+            guard let value = sqlPropertie.value else {
+                continue
+            }
+            
             let primaryKey = sqlMirrorModel.sqlPrimaryKey
             
             sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")

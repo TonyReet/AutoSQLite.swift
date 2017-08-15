@@ -10,10 +10,10 @@ import UIKit
 
 class TestModel: SQLiteModel {
     
-    var name    : String?
+    var name    : String = ""
     var age     : Int = 0
     var pkid    : Int = 0//PRIMARY KEY ID,这个不能是optional类型
-    var ignore  : String?//需要忽略的属性
+    var ignore  : String = ""//需要忽略的属性
     
     //后面需要支持的类型
     //    var optionalString : String?
