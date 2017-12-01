@@ -277,7 +277,7 @@ class SQLiteDataBase: NSObject {
     // MARK: - Tool Func
     // 检查tableName是否有效
     func checkNameIsVerify(_ name: String) -> Bool {
-        if name.characters.count == 0 {
+        if name.count == 0 {
             sqlitePrint("name: \(name) format error")
             return false
         }
@@ -440,9 +440,9 @@ extension SQLiteDataBase {
             
             let sqlStr = "SELECT COUNT(*) FROM \(tableName) where \(object.primaryKey()) = \(String(describing: pkidValue))"
             
-            sqlitePrint("sql语句:\(sqlStr)")
+//            sqlitePrint("sql语句:\(sqlStr)")
             let isExists = try database?.scalar(sqlStr) as! Int64 > 0
-            sqlitePrint("查询数据:\(isExists == true ? "存在" : "不存在")")
+//            sqlitePrint("查询数据:\(isExists == true ? "存在" : "不存在")")
             return isExists
         }catch {
             sqlitePrint(error)
@@ -497,8 +497,6 @@ extension SQLiteDataBase {
         }
         
         keyStr = SQLiteDataBaseTool.removeLastStr(keyStr)
-        valueStr = SQLiteDataBaseTool.removeLastStr(valueStr)
-        
         
         var sqlStr = ""
         if isExisit(object,tableName:tableName) == true {//存在
@@ -602,7 +600,7 @@ extension SQLiteDataBase {
             let primaryKey = sqlMirrorModel.sqlPrimaryKey
             
             sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
-            guard key != primaryKey else {
+            if key == primaryKey ,let value = value {
                 whereStr = "\(key) = '\(String(describing: value))'"
                 continue
             }
@@ -620,7 +618,7 @@ extension SQLiteDataBase {
             return
         }
         
-        let sqlStr = "DROP FROM \(tableName)"
+        let sqlStr = "DROP TABLE \(tableName)"
         execute(sqlStr)
     }
     
@@ -650,7 +648,7 @@ extension SQLiteDataBase {
     ///   - sqrStr: sql语句
     ///   - finish: 结束的闭包
     ///   - fail: 失败的闭包
-    func execute(_ sqlStr:String,finish:()->() = { _ in },fail:()->() = { _ in }){
+    func execute(_ sqlStr:String,finish:()->() = {},fail:()->() = {}){
         do {
             sqlitePrint("sql语句:\(sqlStr)")
             try database?.execute(sqlStr)
@@ -949,7 +947,7 @@ extension SQLiteDataBase {
             return
         }
         
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: SQLiteModel()) else {
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return
         }
         

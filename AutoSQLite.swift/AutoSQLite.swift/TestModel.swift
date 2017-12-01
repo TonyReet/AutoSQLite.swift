@@ -8,6 +8,7 @@
 
 import UIKit
 
+@objcMembers
 class TestModel: SQLiteModel {
     
     var name    : String = ""

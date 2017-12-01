@@ -37,7 +37,7 @@ class SQLiteDataBaseTool: NSObject{
     /// - Parameter oldStr:未处理的字符串
     /// - Returns: 处理完的字符串
     class func removeLastStr(_ oldStr:String)->String{
-        return oldStr.substring(to: oldStr.index(before: oldStr.endIndex))
+        return String(oldStr[..<oldStr.index(before: oldStr.endIndex)])
     }
     
     

@@ -12,6 +12,7 @@ import Foundation
 /// 先使用这个基类进行操作，后续这个基类需要改为protocol
 
 /// 基类
+@objcMembers
 class SQLiteModel: NSObject {
     required override public init() {
         super.init()
