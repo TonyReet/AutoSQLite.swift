@@ -5,6 +5,6 @@ inhibit_all_warnings!
 
 target 'AutoSQLite.swift' do
 
-  pod 'AutoSQLite.swift', :path => './'
+  pod 'AutoSQLite.swift', :path => '../'
 
 end
