@@ -46,8 +46,6 @@ class SQLPropertyModel: NSObject {
             self.express = Expression<Double>(key)
         }else if type is Bool.Type {
             self.express = Expression<Bool>(key)
-        }else if type is String.Type {
-            self.express = Expression<String>(key)
         }else {
             self.express =  Expression<String>(key)
         }

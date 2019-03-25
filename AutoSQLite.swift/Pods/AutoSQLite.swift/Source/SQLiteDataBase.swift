@@ -497,7 +497,6 @@ extension SQLiteDataBase {
         }
         
         keyStr = SQLiteDataBaseTool.removeLastStr(keyStr)
-        valueStr = SQLiteDataBaseTool.removeLastStr(valueStr)
         
         var sqlStr = ""
         if isExisit(object,tableName:tableName) == true {//存在
@@ -845,13 +844,13 @@ extension SQLiteDataBase {
             guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let primaryKeyModel = primaryKeyModel else {
                 return
             }
-
+            
             let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
-
+            
             if let _ = try database?.pluck(filterTable) {//如果存在就更新
                 _ = try database?.run(filterTable.update(sqlSetters))
-            }else {
-                _ = try database?.run(dataBaseTable.insert(sqlSetters))
+            } else {
+                try database?.run(dataBaseTable.insert(sqlSetters))
             }
         } catch {
             print(error)
@@ -971,8 +970,6 @@ extension SQLiteDataBase {
             
             let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
             _ = try database?.run(filterTable.delete())
-            
-            self.dataBaseTables.removeValue(forKey: tableName)
         } catch {
             print(error)
         }
@@ -987,8 +984,6 @@ extension SQLiteDataBase {
         
         do {
             _ = try database?.run(dataBaseTable.drop(ifExists: true))
-            
-            self.dataBaseTables.removeValue(forKey: tableName)
         } catch {
             print(error)
         }

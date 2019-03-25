@@ -18,16 +18,34 @@ class SQLiteOperateVc: UIViewController {
     }
 
     // 创建db
-    var manager: SQLiteDataBase?
+    lazy var manager: SQLiteDataBase = {
+        
+        var dataName = ""
+        if operateType == .statement {
+            dataName = "statementDB"
+        }else{
+            dataName = "wrapperDB"
+        }
+        
+        return SQLiteDataBase.createDB(dataName)
+    }()
 
     // 测试的model
-    var testModel = TestModel()
+    lazy var testModel: TestModel = {
+        let testModel =  TestModel()
+        testModel.pkid      = 1
+        testModel.age       = 18
+        testModel.name      = "Tony"
+        testModel.ignore    = "ignore"
+        
+        return testModel;
+    }()
     
 
     let sqlTableName = "testTable"
     
     @IBAction func createAction() {
-        createOperate()
+        
     }
     
     @IBAction func insertAction() {
@@ -64,47 +82,26 @@ class SQLiteOperateVc: UIViewController {
 
 // MARK: - sql语句操作的方法
 extension SQLiteOperateVc{
-    
-    func createOperate() {
-        
-        var dataName = ""
-        if operateType == .statement {
-            dataName = "statementDB"
-        }else{
-            dataName = "wrapperDB"
-        }
-        manager = SQLiteDataBase.createDB(dataName)
-        
-        testModel.pkid      = 1
-        testModel.age       = 18
-        testModel.name      = "Tony"
-        testModel.ignore    = "ignore"
-    }
-    
     func insertOperate() {
-        manager?.insert(testModel , intoTable: sqlTableName)
-        
-//        SQLiteDataBase.insert(object: testModel, intoTable: "statementTable")
+        manager.insert(testModel , intoTable: sqlTableName)
     }
     
     
     func updateOperate() {
         testModel.name = "Reet"
-        manager?.update(testModel, fromTable: sqlTableName)
-        
-//        SQLiteDataBase.update(testModel, fromTable: "statementTable")
+        manager.update(testModel, fromTable: sqlTableName)
     }
     
     
     func deleteOperate() {
-        manager?.delete(testModel, fromTable: sqlTableName)
-        
-//        SQLiteDataBase.delete(testModel, fromTable: "statementTable")
+        manager.delete(testModel, fromTable: sqlTableName)
     }
     
     
     func selectOperate() {
-        guard let results = manager?.select(testModel, fromTable: sqlTableName),results.count > 0 else {
+        let results = manager.select(testModel, fromTable: sqlTableName)
+        
+        if results.count == 0 {
             print("没有查询到数据")
             return
         }
@@ -112,20 +109,10 @@ extension SQLiteOperateVc{
         for result in results {
             print("查询的数据\(result)")
         }
-        
-//        let results = SQLiteDataBase.select(testModel, fromTable: "statementTable")
-//
-//        if results.count > 0{
-//            for result in results {
-//                print("查询的数据\(result)")
-//            }
-//        }else {
-//            print("没有查询到数据")
-//        }
     }
     
     
     func dropOperate() {
-        manager?.drop(dropTable: sqlTableName)
+        manager.drop(dropTable: sqlTableName)
     }
 }
