@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   
   s.ios.deployment_target = '10.0'
 
-  s.source_files = "AutoSQLite.swift/Source/**/*.{swift}"
+  s.source_files = "AutoSQLite.swift/Source/*.{swift}"
   # s.resources    = "DFDSCSDK/Kit/**/*.{xib,nib,storyboard,png}"
   # s.resources    = "DFDSCSDK/**/*.{xib,html,xcdatamodeld,storyboard,plist,bundle,json}"
 
