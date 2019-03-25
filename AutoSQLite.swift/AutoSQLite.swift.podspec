@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "AutoSQLite.swift"
-  s.version      = '0.0.2'
+  s.version      = '0.0.3'
   s.license      = "MIT"
   s.summary      = '自动解析'
 
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   
   s.ios.deployment_target = '10.0'
 
-  s.source_files = "../Source/*.{swift}"
+  s.source_files = "../Source/*.swift"
   # s.resources    = "DFDSCSDK/Kit/**/*.{xib,nib,storyboard,png}"
   # s.resources    = "DFDSCSDK/**/*.{xib,html,xcdatamodeld,storyboard,plist,bundle,json}"
 
