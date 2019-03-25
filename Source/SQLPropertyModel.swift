@@ -11,22 +11,22 @@ import SQLite
 
 
 /// 保存属性的model
-class SQLPropertyModel: NSObject {
+open class SQLPropertyModel: NSObject {
     
-    var key     : String
+    public var key     : String
     
-    var value   : AnyObject?
+    public var value   : AnyObject?
     
     //类型
-    var type    : Any.Type
+    public var type    : Any.Type
     
     //是否是主键
-    var isPrimaryKey = false
+    public var isPrimaryKey = false
 
     private let express:Expressible
     
     
-    init(type:Any.Type, key:String, value:AnyObject,isPrimaryKey:Bool) {
+    public init(type:Any.Type, key:String, value:AnyObject,isPrimaryKey:Bool) {
         self.type = type
         self.key = key
         self.value = value
@@ -46,13 +46,15 @@ class SQLPropertyModel: NSObject {
             self.express = Expression<Double>(key)
         }else if type is Bool.Type {
             self.express = Expression<Bool>(key)
+        }else if type is String.Type {
+            self.express = Expression<String>(key)
         }else {
             self.express =  Expression<String>(key)
         }
     }
     
     
-    func sqlSetter(_ object:SQLiteModel) -> SQLite.Setter {
+    public func sqlSetter(_ object:SQLiteModel) -> SQLite.Setter {
         
         let value:Any? = object.value(forKey: key)
         if type is Int?.Type {
@@ -74,7 +76,7 @@ class SQLPropertyModel: NSObject {
         }
     }
 
-    func sqlRowToModel(_ object:SQLiteModel,row:Row) {
+    public func sqlRowToModel(_ object:SQLiteModel,row:Row) {
         if type is Int?.Type {
             object.setValue(row[express as! Expression<Int64?>], forKey: key)
         }else if type is Float?.Type, type is Double?.Type {
@@ -95,7 +97,7 @@ class SQLPropertyModel: NSObject {
     }
     
 
-    func sqlFilter(_ object:SQLiteModel) -> Expression<Bool> {
+    public func sqlFilter(_ object:SQLiteModel) -> Expression<Bool> {
         
         let value:Any? = object.value(forKey: key)
         if type is Int?.Type {
@@ -118,7 +120,7 @@ class SQLPropertyModel: NSObject {
     }
     
 
-    func sqlBuildRow(builder:SQLite.TableBuilder,isPkid:Bool) {
+    public func sqlBuildRow(builder:SQLite.TableBuilder,isPkid:Bool) {
 
         let isPkid = self.isPrimaryKey
         if type is Int?.Type {

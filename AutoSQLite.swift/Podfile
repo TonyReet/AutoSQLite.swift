@@ -5,5 +5,7 @@ inhibit_all_warnings!
 
 target 'AutoSQLite.swift' do
 
-  pod 'AutoSQLite.swift'
+  pod 'AutoSQLiteSwift', :path => '../'
+
+  pod 'Alamofire', '~> 5.0.0-beta.3'
 end

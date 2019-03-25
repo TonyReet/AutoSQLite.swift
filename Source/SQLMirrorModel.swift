@@ -11,7 +11,7 @@ import SQLite
 
 
 /// 反射保存属性的model
-class SQLMirrorModel: NSObject {
+open class SQLMirrorModel: NSObject {
     
     public var sqlProperties : [SQLPropertyModel] = []
     
@@ -19,7 +19,7 @@ class SQLMirrorModel: NSObject {
     public var sqlPrimaryKey : String
     
     
-    init(primaryKey:String, properties:[SQLPropertyModel]) {
+    public init(primaryKey:String, properties:[SQLPropertyModel]) {
         sqlPrimaryKey = primaryKey
         sqlProperties = properties
 
@@ -31,7 +31,7 @@ class SQLMirrorModel: NSObject {
     /// - Parameters:
     ///   - object: 传入的objc
     ///   - mirrorFinish: 反射结束后的闭包
-    class func operateByMirror(object: SQLiteModel)->SQLMirrorModel?{
+    public class func operateByMirror(object: SQLiteModel)->SQLMirrorModel?{
         let mirror = Mirror(reflecting: object)
         
         guard let displayStyle = mirror.displayStyle else {

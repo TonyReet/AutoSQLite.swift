@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AutoSQLiteSwift
 
 @objcMembers
 class TestModel: SQLiteModel {

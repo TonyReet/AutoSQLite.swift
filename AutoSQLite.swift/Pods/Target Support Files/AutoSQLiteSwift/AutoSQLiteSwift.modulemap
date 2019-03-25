@@ -1,0 +1,6 @@
+framework module AutoSQLiteSwift {
+  umbrella header "AutoSQLiteSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}

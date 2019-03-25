@@ -12,17 +12,16 @@ import Foundation
 /// 先使用这个基类进行操作，后续这个基类需要改为protocol
 
 /// 基类
-@objcMembers
-class SQLiteModel: NSObject {
-    required override public init() {
+open class SQLiteModel: NSObject {
+    public required override init() {
         super.init()
     }
     
-    func primaryKey() -> String {
+    open func primaryKey() -> String {
         return ""
     }
     
-    func ignoreKeys() -> [String] {
+    open func ignoreKeys() -> [String] {
         return []
     }
 }

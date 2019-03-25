@@ -7,10 +7,10 @@
 //
 
 import UIKit
+import AutoSQLiteSwift
 
 //SQL 语句操作的vc
 class SQLiteOperateVc: UIViewController {
-    
     var operateType: SQLiteOperateType = .statement{
         didSet{
             SQLiteDataBase.shared.operateType = self.operateType

@@ -14,12 +14,12 @@ import SQLite
 /// 这个类的功能要逐渐去掉到没有
 
 /// 工具类
-class SQLiteDataBaseTool: NSObject{
+open class SQLiteDataBaseTool: NSObject{
     /// 将原生的类型转换成sql类型
     ///
     /// - Parameter type: 原生类型
     /// - Returns: sql类型
-    class func sqlType(_ nativeType : Any.Type)->String {
+    public class func sqlType(_ nativeType : Any.Type)->String {
         
         if nativeType is Int.Type {
             return "INTEGER"
@@ -36,7 +36,7 @@ class SQLiteDataBaseTool: NSObject{
     ///
     /// - Parameter oldStr:未处理的字符串
     /// - Returns: 处理完的字符串
-    class func removeLastStr(_ oldStr:String)->String{
+    public class func removeLastStr(_ oldStr:String)->String{
         return String(oldStr[..<oldStr.index(before: oldStr.endIndex)])
     }
     
@@ -44,7 +44,7 @@ class SQLiteDataBaseTool: NSObject{
     /// 去掉空格
     ///
     /// - Parameter name: 处理完的字符串
-    class func removeBlankSpace(_ name: String)->String{
+    public class func removeBlankSpace(_ name: String)->String{
         var databaseName = name
         
         //包含空格的情况，去掉空格
@@ -59,7 +59,7 @@ class SQLiteDataBaseTool: NSObject{
     /// 获取当前时间的str
     ///
     /// - Returns: 当前时间的str
-    class func dateNowAsString() -> String {
+    public class func dateNowAsString() -> String {
         let nowDate = Date()
         let timeInterval = nowDate.timeIntervalSince1970 * 1000
         let timeString: String = String(timeInterval)

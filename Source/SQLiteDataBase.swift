@@ -9,21 +9,21 @@
 import Foundation
 import SQLite
 
-enum SQLiteOperateType: Int {
+public enum SQLiteOperateType: Int {
     case wrapper = 0//sqlite封装的类型(SQLite.Swift封装的类型)
     case statement = 1//sql语句操作的类型
 }
 
 
-class SQLiteDataBase: NSObject {
+open class SQLiteDataBase: NSObject {
     //创建单例
-    static let shared           = SQLiteDataBase()
+    public static let shared           = SQLiteDataBase()
     
     /// 是否打开打印,true是打开,false是关闭
-    var printDebug              = true
+    public var printDebug              = true
     
     //使用操作的类型，默认使用SQLite.swift的封装方式
-    var operateType: SQLiteOperateType = .wrapper
+    public var operateType: SQLiteOperateType = .wrapper
     
     fileprivate let default_DataBase_Name   = "database"
     
@@ -37,7 +37,7 @@ class SQLiteDataBase: NSObject {
     
     // MARK: - 类方法
     // 初始化db
-    class func createDB(_ dataBaseName: String )->SQLiteDataBase {
+    public  class func createDB(_ dataBaseName: String )->SQLiteDataBase {
         let sqliteDataBase = SQLiteDataBase.shared
         
         let defaultPath = sqliteDataBase.defaultPath()
@@ -61,7 +61,7 @@ class SQLiteDataBase: NSObject {
     }
     
     // MARK: - 创建表
-    class func createTable(_ tableName: String,object:SQLiteModel) {
+    public class func createTable(_ tableName: String,object:SQLiteModel) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -73,7 +73,7 @@ class SQLiteDataBase: NSObject {
     }
     
     // MARK: - 插入数据
-    class func insert(object: SQLiteModel, intoTable tableName: String) {
+    public class func insert(object: SQLiteModel, intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -84,7 +84,7 @@ class SQLiteDataBase: NSObject {
         }
     }
     
-    class func insertList(objectList: [SQLiteModel], intoTable tableName: String) {
+    public class func insertList(objectList: [SQLiteModel], intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -97,7 +97,7 @@ class SQLiteDataBase: NSObject {
     
     
     // MARK: - 更新数据
-    class func update(_ object: SQLiteModel,fromTable tableName: String) {
+    public class func update(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -108,7 +108,7 @@ class SQLiteDataBase: NSObject {
         }
     }
     
-    class func updateList(objectList: [SQLiteModel], fromTable tableName: String) {
+    public class func updateList(objectList: [SQLiteModel], fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -120,7 +120,7 @@ class SQLiteDataBase: NSObject {
     }
     
     // MARK: - 查询数据
-    class func selectAll(fromTable tableName: String)->[[String:AnyObject]]{
+    public class func selectAll(fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -131,7 +131,7 @@ class SQLiteDataBase: NSObject {
         }
     }
     
-    class func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
+    public class func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -144,7 +144,7 @@ class SQLiteDataBase: NSObject {
     
     
     // MARK: - 删除数据
-    class func delete(_ object: SQLiteModel,fromTable tableName: String) {
+    public class func delete(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -155,11 +155,11 @@ class SQLiteDataBase: NSObject {
         }
     }
     
-    class func deleteWhere(_ sqlWhere: String,fromTable tableName: String) {
+    public class func deleteWhere(_ sqlWhere: String,fromTable tableName: String) {
         deleteWhere_statement(sqlWhere,fromTable:tableName)
     }
     
-    class func drop(dropTable tableName: String){
+    public class func drop(dropTable tableName: String){
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -177,7 +177,7 @@ class SQLiteDataBase: NSObject {
     /// - Parameters:
     ///   - tableName: 创建的表名
     ///   - mirrorModels:转换完的model
-    func createTable(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
+    public func createTable(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
         
         switch self.operateType {
         case .statement:
@@ -192,7 +192,7 @@ class SQLiteDataBase: NSObject {
     /// - Parameters:
     ///   - object: object
     ///   - tableName: 需要插入的tableName
-    func insert(_ object: SQLiteModel, intoTable tableName: String) {
+    public func insert(_ object: SQLiteModel, intoTable tableName: String) {
         switch self.operateType {
         case .statement:
             insert_statement(object, intoTable: tableName)
@@ -206,7 +206,7 @@ class SQLiteDataBase: NSObject {
     /// - Parameters:
     ///   - object: 需要修改的object
     ///   - tableName: talbeName
-    func update(_ object: SQLiteModel,fromTable tableName: String) {
+    public func update(_ object: SQLiteModel,fromTable tableName: String) {
         switch self.operateType {
         case .statement:
             update_statement(object,intoTable: tableName)
@@ -222,11 +222,11 @@ class SQLiteDataBase: NSObject {
     ///   - tableName: 表名
     ///   - sqlWhere: sql查询语句
     /// - Returns: 返回结果
-    func select(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
+    public func select(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
         return select_statement(fromTable:tableName,sqlWhere: sqlWhere)
     }
     
-    func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
+    public func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
         switch self.operateType {
         case .statement:
             return select_statement(object,fromTable: tableName)
@@ -240,11 +240,11 @@ class SQLiteDataBase: NSObject {
     /// - Parameters:
     ///   - tableName: table
     ///   - sqlWhere: 执行的where语句
-    func delete(fromTable tableName: String,sqlWhere: String) {
+    public func delete(fromTable tableName: String,sqlWhere: String) {
         delete_statement(fromTable:tableName,sqlWhere:sqlWhere)
     }
     
-    func delete(_ object: SQLiteModel,fromTable tableName: String) {
+    public func delete(_ object: SQLiteModel,fromTable tableName: String) {
         switch self.operateType {
         case .statement:
             delete_statement(object,fromTable: tableName)
@@ -256,7 +256,7 @@ class SQLiteDataBase: NSObject {
     /// 删除整张表
     ///
     /// - Parameter tableName: 删除的表名
-    func drop(dropTable tableName: String) {
+    public func drop(dropTable tableName: String) {
         switch self.operateType {
         case .statement:
             drop_statement(dropTable:tableName)
@@ -266,7 +266,7 @@ class SQLiteDataBase: NSObject {
     }
     
     // MARK: - 获取默认的路径地址
-    func defaultPath() -> String {
+    public func defaultPath() -> String {
         guard let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else{
             return NSHomeDirectory()
         }
@@ -276,7 +276,7 @@ class SQLiteDataBase: NSObject {
     
     // MARK: - Tool Func
     // 检查tableName是否有效
-    func checkNameIsVerify(_ name: String) -> Bool {
+    public func checkNameIsVerify(_ name: String) -> Bool {
         if name.count == 0 {
             sqlitePrint("name: \(name) format error")
             return false
@@ -288,7 +288,7 @@ class SQLiteDataBase: NSObject {
     /// 统一的打印
     ///
     /// - Parameter printObj: 打印的内容
-    func sqlitePrint(_ printObj:Any){
+    public func sqlitePrint(_ printObj:Any){
         if printDebug == true {
             print(printObj)
         }
@@ -298,7 +298,7 @@ class SQLiteDataBase: NSObject {
 // MARK: - 所有sql执行相关的方法
 extension SQLiteDataBase {
     // MARK: - 类方法
-    class func createTable_statement(_ tableName: String,object:SQLiteModel) {
+    public class func createTable_statement(_ tableName: String,object:SQLiteModel) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
@@ -308,13 +308,13 @@ extension SQLiteDataBase {
         sqliteDataBase.createTable_statement(tableName,sqlMirrorModel:sqlMirrorModel)
     }
     
-    class func insert_statement(_ object: SQLiteModel, intoTable tableName: String) {
+    public class func insert_statement(_ object: SQLiteModel, intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.insert_statement(object, intoTable: tableName)
     }
     
-    class func insertList_statement(_ objectList: [SQLiteModel], intoTable tableName: String) {
+    public class func insertList_statement(_ objectList: [SQLiteModel], intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         for object in objectList {
@@ -322,13 +322,13 @@ extension SQLiteDataBase {
         }
     }
     
-    class func update_statement(_ object: SQLiteModel,fromTable tableName: String) {
+    public class func update_statement(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.update_statement(object,intoTable:tableName)
     }
     
-    class func updateList_statement(_ objectList: [SQLiteModel], fromTable tableName: String) {
+    public class func updateList_statement(_ objectList: [SQLiteModel], fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         for object in objectList {
@@ -336,20 +336,20 @@ extension SQLiteDataBase {
         }
     }
 
-    class func selectAll_statement(fromTable tableName: String)->[[String:AnyObject]]{
+    public class func selectAll_statement(fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
         return sqliteDataBase.select_statement(fromTable:tableName,sqlWhere: nil)
     }
     
     
-    class func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
+    public class func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
         return sqliteDataBase.select_statement(object,fromTable:tableName)
     }
     
-    class func delete_statement(_ object: SQLiteModel,fromTable tableName: String) {
+    public class func delete_statement(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
@@ -367,19 +367,19 @@ extension SQLiteDataBase {
         }
     }
     
-    class func deleteWhere_statement(_ sqlWhere: String,fromTable tableName: String) {
+    public class func deleteWhere_statement(_ sqlWhere: String,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.delete_statement(fromTable: tableName,sqlWhere: sqlWhere)
     }
     
-    class func drop_statement(dropTable tableName: String){
+    public class func drop_statement(dropTable tableName: String){
         let sqliteDataBase = SQLiteDataBase.shared
         sqliteDataBase.drop_statement(dropTable:tableName)
     }
     
     // MARK: - 实例方法
-    func createTable_statement(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
+    public func createTable_statement(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
         
         if !checkNameIsVerify(tableName) {
             sqlitePrint("failed to create table: \(tableName)")
@@ -427,7 +427,7 @@ extension SQLiteDataBase {
         execute(sqlStr)
     }
     
-    func isExisit(_ object: SQLiteModel,tableName:String) -> Bool{
+    public func isExisit(_ object: SQLiteModel,tableName:String) -> Bool{
         guard database != nil else {
             return false
         }
@@ -450,15 +450,15 @@ extension SQLiteDataBase {
         }
     }
     
-    func insert_statement(_ object: SQLiteModel, intoTable tableName: String) {
+    public func insert_statement(_ object: SQLiteModel, intoTable tableName: String) {
         save_statement(object,intoTable:tableName)
     }
 
-    func update_statement(_ object: SQLiteModel,intoTable tableName: String) {
+    public func update_statement(_ object: SQLiteModel,intoTable tableName: String) {
         save_statement(object,intoTable:tableName)
     }
     
-    func save_statement(_ object: SQLiteModel,intoTable tableName: String) {
+    public func save_statement(_ object: SQLiteModel,intoTable tableName: String) {
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return
         }
@@ -482,7 +482,7 @@ extension SQLiteDataBase {
                 
                 sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
                 guard key != primaryKey else {
-                    valueStr = "\(key) = '\(value)'"
+                    valueStr = "\(key) = '\(value)' ,"
                     continue
                 }
                 
@@ -497,6 +497,7 @@ extension SQLiteDataBase {
         }
         
         keyStr = SQLiteDataBaseTool.removeLastStr(keyStr)
+        valueStr = SQLiteDataBaseTool.removeLastStr(valueStr)
         
         var sqlStr = ""
         if isExisit(object,tableName:tableName) == true {//存在
@@ -509,7 +510,7 @@ extension SQLiteDataBase {
     }
     
     
-    func select_statement(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
+    public func select_statement(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
         if tableExists(tableName: tableName) == false {
             return [[String:AnyObject]]()
         }
@@ -527,7 +528,7 @@ extension SQLiteDataBase {
         return results
     }
     
-    func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
+    public func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
         if tableExists(tableName: tableName) == false {
             return [[String:AnyObject]]()
         }
@@ -571,7 +572,7 @@ extension SQLiteDataBase {
         return results
     }
     
-    func delete_statement(fromTable tableName: String,sqlWhere: String) {
+    public func delete_statement(fromTable tableName: String,sqlWhere: String) {
         if tableExists(tableName: tableName) == false {
             return
         }
@@ -580,7 +581,7 @@ extension SQLiteDataBase {
         execute(sqlStr)
     }
     
-    func delete_statement(_ object: SQLiteModel,fromTable tableName: String) {
+    public func delete_statement(_ object: SQLiteModel,fromTable tableName: String) {
         if tableExists(tableName: tableName) == false {
             return
         }
@@ -613,7 +614,7 @@ extension SQLiteDataBase {
         }
     }
     
-    func drop_statement(dropTable tableName: String) {
+    public func drop_statement(dropTable tableName: String) {
         if tableExists(tableName: tableName) == false {
             return
         }
@@ -623,7 +624,7 @@ extension SQLiteDataBase {
     }
     
     //https://github.com/stephencelis/SQLite.swift/issues/6
-    func tableExists(tableName: String) -> Bool {
+    public func tableExists(tableName: String) -> Bool {
         guard database != nil else {
             return false
         }
@@ -648,7 +649,7 @@ extension SQLiteDataBase {
     ///   - sqrStr: sql语句
     ///   - finish: 结束的闭包
     ///   - fail: 失败的闭包
-    func execute(_ sqlStr:String,finish:()->() = {},fail:()->() = {}){
+    public func execute(_ sqlStr:String,finish:()->() = {},fail:()->() = {}){
         do {
             sqlitePrint("sql语句:\(sqlStr)")
             try database?.execute(sqlStr)
@@ -665,7 +666,7 @@ extension SQLiteDataBase {
     /// - Parameter sqlStr: 查询的语句
     /// - Returns: 返回查询的数据，因为可能是多个，并且每个都以字典类型返回
     /// - 所以是数据类型是[[String:AnyObject]],[String:AnyObject]是字典类型
-    func prepare(_ sqlStr: String)->[[String:AnyObject]]{
+    public func prepare(_ sqlStr: String)->[[String:AnyObject]]{
         var elements:[[String:AnyObject]] = []
         
         do {
@@ -704,7 +705,7 @@ extension SQLiteDataBase {
 // MARK: - 所有SQLite.swift封装的方法
 extension SQLiteDataBase {
     // MARK: - 类方法
-    class func createTable_wrapper(_ tableName: String,object:SQLiteModel) {
+    public class func createTable_wrapper(_ tableName: String,object:SQLiteModel) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
@@ -714,13 +715,13 @@ extension SQLiteDataBase {
         sqliteDataBase.createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
     }
     
-    class func insert_wrapper(_ object: SQLiteModel, intoTable tableName: String) {
+    public class func insert_wrapper(_ object: SQLiteModel, intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.insert_wrapper(object, intoTable: tableName)
     }
     
-    class func insertList_wrapper(_ objectList: [SQLiteModel], intoTable tableName: String) {
+    public class func insertList_wrapper(_ objectList: [SQLiteModel], intoTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         for object in objectList {
@@ -728,13 +729,13 @@ extension SQLiteDataBase {
         }
     }
     
-    class func update_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
+    public class func update_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         sqliteDataBase.update_wrapper(object,intoTable:tableName)
     }
     
-    class func updateList_wrapper(_ objectList: [SQLiteModel], fromTable tableName: String) {
+    public class func updateList_wrapper(_ objectList: [SQLiteModel], fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         for object in objectList {
@@ -742,19 +743,19 @@ extension SQLiteDataBase {
         }
     }
     
-    class func selectAll_wrapper(fromTable tableName: String)->[[String:AnyObject]]{
+    public class func selectAll_wrapper(fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
         return sqliteDataBase.select_wrapper(fromTable:tableName)
     }
     
-    class func select_wrapper(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
+    public class func select_wrapper(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
         return sqliteDataBase.select_wrapper(object,fromTable:tableName)
     }
     
-    class func delete_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
+    public class func delete_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
         let sqliteDataBase = SQLiteDataBase.shared
         
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
@@ -773,13 +774,13 @@ extension SQLiteDataBase {
     }
     
 
-    class func drop_wrapper(dropTable tableName: String){
+    public class func drop_wrapper(dropTable tableName: String){
         let sqliteDataBase = SQLiteDataBase.shared
         sqliteDataBase.drop_wrapper(dropTable:tableName)
     }
     
     // MARK: - 实例方法
-    func createTable_wrapper(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
+    public func createTable_wrapper(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
         
         if !checkNameIsVerify(tableName) {
             sqlitePrint("failed to create table: \(tableName)")
@@ -812,15 +813,15 @@ extension SQLiteDataBase {
         }
     }
     
-    func insert_wrapper(_ object: SQLiteModel, intoTable tableName: String) {
+    public func insert_wrapper(_ object: SQLiteModel, intoTable tableName: String) {
         save_wrapper(object,intoTable:tableName)
     }
     
-    func update_wrapper(_ object: SQLiteModel,intoTable tableName: String) {
+    public func update_wrapper(_ object: SQLiteModel,intoTable tableName: String) {
         save_wrapper(object,intoTable:tableName)
     }
     
-    func save_wrapper(_ object: SQLiteModel,intoTable tableName: String){
+    public func save_wrapper(_ object: SQLiteModel,intoTable tableName: String){
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return
         }
@@ -844,13 +845,13 @@ extension SQLiteDataBase {
             guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let primaryKeyModel = primaryKeyModel else {
                 return
             }
-            
+
             let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
-            
+
             if let _ = try database?.pluck(filterTable) {//如果存在就更新
                 _ = try database?.run(filterTable.update(sqlSetters))
-            } else {
-                try database?.run(dataBaseTable.insert(sqlSetters))
+            }else {
+                _ = try database?.run(dataBaseTable.insert(sqlSetters))
             }
         } catch {
             print(error)
@@ -859,7 +860,7 @@ extension SQLiteDataBase {
     
 
     
-    func select_wrapper(_ object: SQLiteModel? = nil,fromTable tableName: String)->[[String:AnyObject]] {
+    public func select_wrapper(_ object: SQLiteModel? = nil,fromTable tableName: String)->[[String:AnyObject]] {
         var results = [[String:AnyObject]]()
         
         if tableExists(tableName: tableName) == false {
@@ -892,7 +893,7 @@ extension SQLiteDataBase {
 
     }
     
-    func select_wrapper_model(_ object: SQLiteModel,fromTable tableName: String)->[SQLiteModel] {
+    public func select_wrapper_model(_ object: SQLiteModel,fromTable tableName: String)->[SQLiteModel] {
         var results = [SQLiteModel]()
         if tableExists(tableName: tableName) == false {
             return results
@@ -942,7 +943,7 @@ extension SQLiteDataBase {
     }
     
 
-    func delete_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
+    public func delete_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
         if tableExists(tableName: tableName) == false {
             return
         }
@@ -970,12 +971,14 @@ extension SQLiteDataBase {
             
             let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
             _ = try database?.run(filterTable.delete())
+            
+            self.dataBaseTables.removeValue(forKey: tableName)
         } catch {
             print(error)
         }
     }
     
-    func drop_wrapper(dropTable tableName: String) {
+    public func drop_wrapper(dropTable tableName: String) {
         let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
         
         guard let dataBaseTable:Table = dataBaseTables[tableFinalName] else {
@@ -984,6 +987,8 @@ extension SQLiteDataBase {
         
         do {
             _ = try database?.run(dataBaseTable.drop(ifExists: true))
+            
+            self.dataBaseTables.removeValue(forKey: tableName)
         } catch {
             print(error)
         }

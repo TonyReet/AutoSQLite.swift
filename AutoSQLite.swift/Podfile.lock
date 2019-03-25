@@ -1,22 +1,29 @@
 PODS:
-  - AutoSQLite.swift (0.0.5):
+  - Alamofire (5.0.0-beta.3)
+  - AutoSQLiteSwift (0.0.5):
     - SQLite.swift (~> 0.11.5)
   - SQLite.swift (0.11.5):
     - SQLite.swift/standard (= 0.11.5)
   - SQLite.swift/standard (0.11.5)
 
 DEPENDENCIES:
-  - AutoSQLite.swift
+  - Alamofire (~> 5.0.0-beta.3)
+  - AutoSQLiteSwift (from `../`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - AutoSQLite.swift
+    - Alamofire
     - SQLite.swift
 
+EXTERNAL SOURCES:
+  AutoSQLiteSwift:
+    :path: "../"
+
 SPEC CHECKSUMS:
-  AutoSQLite.swift: ea8d8c8cf42222315d604993de23d7c4756f6079
+  Alamofire: 50d6fa7e8cbe7f84559e86ab641ffd029db655f8
+  AutoSQLiteSwift: 3b6733ddc98504271524d7d2aa5f9fa5c7497774
   SQLite.swift: 6e5356850bb1791459f8c16d6ee9195b28714a2e
 
-PODFILE CHECKSUM: 24c7fbee896a39dc50222b60f1f4613f280491c0
+PODFILE CHECKSUM: 1e0c10224d5808b24f1afd1ae1715dd148329841
 
 COCOAPODS: 1.5.3
