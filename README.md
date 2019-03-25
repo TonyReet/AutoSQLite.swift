@@ -80,16 +80,6 @@ SQLPropertyModel.swift
 
 ```
 
-### TODO:
-
-1、添加对非基本类型的处理
-2、支持使用protocol,减少代码的耦合
-2、支持pod,carthage
-~~3、使用SQLite.swift的风格重写Model的直接操作~~
-~~4、增加insert和update的自动判断~~
-
-你的star是我的动力
-
 有任何疑问或建议. 欢迎在github或微博里issue我. 
 微博:[@TonyReet](http://weibo.com/u/3648931023)
 

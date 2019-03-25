@@ -19,10 +19,9 @@
 		186965EB1EC469EF00B6D2F9 /* SQLiteDataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965EA1EC469EF00B6D2F9 /* SQLiteDataBase.swift */; };
 		186965ED1EC46A0D00B6D2F9 /* SQLMirrorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965EC1EC46A0D00B6D2F9 /* SQLMirrorModel.swift */; };
 		186965EF1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */; };
-		186965F01EC46A7E00B6D2F9 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 186965E71EC4699E00B6D2F9 /* SQLite.framework */; };
-		186965F11EC46A7E00B6D2F9 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 186965E71EC4699E00B6D2F9 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		186965F41EC5B20500B6D2F9 /* SQLiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */; };
 		186965F61EC94C2300B6D2F9 /* SQLPropertyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186965F51EC94C2200B6D2F9 /* SQLPropertyModel.swift */; };
+		B509008F363793047ADD83D5 /* Pods_AutoSQLite_swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA247DA913698B7C0629A0EC /* Pods_AutoSQLite_swift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,20 +41,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		186965F21EC46A7E00B6D2F9 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				186965F11EC46A7E00B6D2F9 /* SQLite.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		183CE29E1ED82539001970A6 /* TestModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestModel.swift; sourceTree = "<group>"; };
 		183CE2A01ED8253E001970A6 /* SQLiteOperateVc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteOperateVc.swift; sourceTree = "<group>"; };
@@ -72,12 +57,14 @@
 		186965D51EC4697C00B6D2F9 /* AutoSQLite.swiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutoSQLite.swiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		186965D91EC4697C00B6D2F9 /* AutoSQLite_swiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoSQLite_swiftUITests.swift; sourceTree = "<group>"; };
 		186965DB1EC4697C00B6D2F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		186965E71EC4699E00B6D2F9 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SQLite.framework; sourceTree = "<group>"; };
 		186965EA1EC469EF00B6D2F9 /* SQLiteDataBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDataBase.swift; sourceTree = "<group>"; };
 		186965EC1EC46A0D00B6D2F9 /* SQLMirrorModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLMirrorModel.swift; sourceTree = "<group>"; };
 		186965EE1EC46A2500B6D2F9 /* SQLiteDataBaseTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteDataBaseTool.swift; sourceTree = "<group>"; };
 		186965F31EC5B20500B6D2F9 /* SQLiteModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLiteModel.swift; sourceTree = "<group>"; };
 		186965F51EC94C2200B6D2F9 /* SQLPropertyModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SQLPropertyModel.swift; sourceTree = "<group>"; };
+		5FBAC6D6FA7CC74869BDD003 /* Pods-AutoSQLite.swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoSQLite.swift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AutoSQLite.swift/Pods-AutoSQLite.swift.debug.xcconfig"; sourceTree = "<group>"; };
+		AA247DA913698B7C0629A0EC /* Pods_AutoSQLite_swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AutoSQLite_swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0F38D4E9C14F068FC96E229 /* Pods-AutoSQLite.swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutoSQLite.swift.release.xcconfig"; path = "Pods/Target Support Files/Pods-AutoSQLite.swift/Pods-AutoSQLite.swift.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				186965F01EC46A7E00B6D2F9 /* SQLite.framework in Frameworks */,
+				B509008F363793047ADD83D5 /* Pods_AutoSQLite_swift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +100,8 @@
 				186965CD1EC4697C00B6D2F9 /* AutoSQLite.swiftTests */,
 				186965D81EC4697C00B6D2F9 /* AutoSQLite.swiftUITests */,
 				186965B71EC4697C00B6D2F9 /* Products */,
+				D0EA137E991D069EB6D5C799 /* Pods */,
+				B07251BDB20ED43EBA89E43E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -129,7 +118,6 @@
 		186965B81EC4697C00B6D2F9 /* AutoSQLite.swift */ = {
 			isa = PBXGroup;
 			children = (
-				186965E71EC4699E00B6D2F9 /* SQLite.framework */,
 				186965E91EC469D700B6D2F9 /* Source */,
 				186965B91EC4697C00B6D2F9 /* AppDelegate.swift */,
 				186965BB1EC4697C00B6D2F9 /* ViewController.swift */,
@@ -173,6 +161,23 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		B07251BDB20ED43EBA89E43E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA247DA913698B7C0629A0EC /* Pods_AutoSQLite_swift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D0EA137E991D069EB6D5C799 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5FBAC6D6FA7CC74869BDD003 /* Pods-AutoSQLite.swift.debug.xcconfig */,
+				D0F38D4E9C14F068FC96E229 /* Pods-AutoSQLite.swift.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -180,10 +185,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 186965DE1EC4697C00B6D2F9 /* Build configuration list for PBXNativeTarget "AutoSQLite.swift" */;
 			buildPhases = (
+				2D648A1D1A8F46138E179055 /* [CP] Check Pods Manifest.lock */,
 				186965B21EC4697C00B6D2F9 /* Sources */,
 				186965B31EC4697C00B6D2F9 /* Frameworks */,
 				186965B41EC4697C00B6D2F9 /* Resources */,
-				186965F21EC46A7E00B6D2F9 /* Embed Frameworks */,
+				CAC3AE76B55C1E6A46F23D9D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -306,6 +312,55 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2D648A1D1A8F46138E179055 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AutoSQLite.swift-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CAC3AE76B55C1E6A46F23D9D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-AutoSQLite.swift/Pods-AutoSQLite.swift-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AutoSQLite.swift/AutoSQLite_swift.framework",
+				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AutoSQLite_swift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AutoSQLite.swift/Pods-AutoSQLite.swift-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		186965B21EC4697C00B6D2F9 /* Sources */ = {
@@ -486,6 +541,7 @@
 		};
 		186965DF1EC4697C00B6D2F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5FBAC6D6FA7CC74869BDD003 /* Pods-AutoSQLite.swift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
@@ -494,6 +550,7 @@
 					"$(PROJECT_DIR)/AutoSQLite.swift",
 				);
 				INFOPLIST_FILE = AutoSQLite.swift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.tonyreet.AutoSQLite-swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -503,6 +560,7 @@
 		};
 		186965E01EC4697C00B6D2F9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D0F38D4E9C14F068FC96E229 /* Pods-AutoSQLite.swift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
@@ -511,6 +569,7 @@
 					"$(PROJECT_DIR)/AutoSQLite.swift",
 				);
 				INFOPLIST_FILE = AutoSQLite.swift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.tonyreet.AutoSQLite-swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
