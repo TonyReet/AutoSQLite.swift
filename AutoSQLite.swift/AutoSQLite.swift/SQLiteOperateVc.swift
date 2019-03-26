@@ -83,6 +83,7 @@ class SQLiteOperateVc: UIViewController {
 // MARK: - sql语句操作的方法
 extension SQLiteOperateVc{
     func insertOperate() {
+        testModel.name = "Tony"
         manager.insert(testModel , intoTable: sqlTableName)
     }
     

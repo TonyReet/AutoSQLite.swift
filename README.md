@@ -1,13 +1,20 @@
 # AutoSQLite.swift
 SQLite.swift的封装，使用swift的反射原理，Model直接存储.获取. 无需再转换,增删改查. 脱离sql语句,不需要添加相关的绑定操作，直接完成转换。
 
-[![](https://img.shields.io/badge/Supported-iOS8-4BC51D.svg?style=flat-square)](https://github.com/TonyReet/TYSnapshotScroll)
-[![](https://img.shields.io/badge/Swift-compatible-4BC51D.svg?style=flat-square)](https://github.com/TonyReet/TYSnapshotScroll)
+[![](https://img.shields.io/badge/Supported-iOS8-4BC51D.svg?style=flat-square)](https://github.com/TonyReet/TYSnapshotScroll)   [![](https://img.shields.io/badge/Swift-compatible-4BC51D.svg?style=flat-square)](https://github.com/TonyReet/TYSnapshotScroll)
 
 ![png](Snapshot.png)
 
 ### 使用方法
-- 1、引入source目录下的文件文件:
+* 1. 导入   
+
+>A. Pod导入
+
+```
+  pod 'AutoSQLiteSwift'
+```
+
+>B. 引入source目录下的文件文件:
 
 ```
 SQLiteModel.swift
@@ -18,7 +25,8 @@ SQLPropertyModel.swift
 
 创建model继承SQLiteModel即可
 ```
-- 2、使用以下方法
+
+- 2. 使用以下方法
 
 ```
         // 创建dataBase,
