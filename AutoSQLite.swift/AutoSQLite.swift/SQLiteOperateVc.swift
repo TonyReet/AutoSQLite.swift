@@ -37,6 +37,7 @@ class SQLiteOperateVc: UIViewController {
         testModel.age       = 18
         testModel.name      = "Tony"
         testModel.ignore    = "ignore"
+        testModel.addAge    = 19
         
         return testModel;
     }()

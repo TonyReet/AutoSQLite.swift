@@ -46,11 +46,13 @@ open class SQLiteDataBase: NSObject {
             
             let databaseName = SQLiteDataBaseTool.removeBlankSpace(dataBaseName)
             
+            sqliteDataBase.databaseName = databaseName
             sqliteDataBase.database = try? Connection("\(defaultPath)/\(databaseName).sqlite3")
             sqliteDataBase.databasePath = "\(defaultPath)/\(databaseName).sqlite3"
         } else {
             
             let default_DataBase_Name = sqliteDataBase.default_DataBase_Name
+            sqliteDataBase.databaseName = default_DataBase_Name
             sqliteDataBase.database = try? Connection("\(defaultPath)/\(default_DataBase_Name).sqlite3")
             sqliteDataBase.databasePath = "\(defaultPath)/\(default_DataBase_Name).sqlite3"
         }
@@ -477,7 +479,9 @@ extension SQLiteDataBase {
             }
             
             if isExisit(object,tableName:tableName) == true {//存在
-
+                /// 如果字段不存在，则创建
+                addColumnIfNoExist_statement(key, tableName: tableName, type: SQLiteDataBaseTool.sqlType(sqlPropertie.type))
+                
                 let primaryKey = sqlMirrorModel.sqlPrimaryKey
                 
                 sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
@@ -621,6 +625,44 @@ extension SQLiteDataBase {
         
         let sqlStr = "DROP TABLE \(tableName)"
         execute(sqlStr)
+    }
+    
+    public func addColumnIfNoExist_statement(_ columnName: String,tableName: String,type:String){
+        do {
+            if tableExists(tableName: tableName) == false {
+                return
+            }
+            
+            guard let databaseName = databaseName else {
+                return
+            }
+
+            guard let database = database else {
+                return
+            }
+            
+            let sqlStr = "select COLUMN_NAME from information_schema.COLUMNS where table_name = ' " + tableName + "' and table_schema = ' " + databaseName + "';"
+
+            let oldColumnNames = prepare(sqlStr).map({ (dic:[String : AnyObject]) -> String in
+                dic.keys.first ?? ""
+            })
+            
+            var isExist = false
+            for oldColumnName in oldColumnNames  {
+                if columnName == oldColumnName {
+                    isExist = true
+                    break
+                }
+            }
+            
+            if !isExist {
+                let alterSqlStr = "ALTER TABLE " + tableName + " ADD \(columnName) \(type)"
+                
+                execute(alterSqlStr)
+            }
+        } catch {
+            sqlitePrint(error)
+        }
     }
     
     //https://github.com/stephencelis/SQLite.swift/issues/6
@@ -838,6 +880,11 @@ extension SQLiteDataBase {
             if sqlPropertie.isPrimaryKey == true {
                 primaryKeyModel = sqlPropertie
             }
+            
+            /// 如果不存在，就添加
+            let key = sqlPropertie.key
+            addColumnIfNoExist_wrapper(key, fromTable: tableName)
+            
             sqlSetters.append(sqlPropertie.sqlSetter(object))
         }
         
@@ -993,5 +1040,38 @@ extension SQLiteDataBase {
             print(error)
         }
 
+    }
+    
+    public func addColumnIfNoExist_wrapper(_ columnName: String,fromTable tableName: String){
+        do {
+            if tableExists(tableName: tableName) == false {
+                return
+            }
+            
+            let table = Table(tableName)
+            
+            let expression = table.expression
+            guard let oldColumnNames = try database?.prepare(expression.template, expression.bindings).columnNames else{
+                return
+            }
+            
+            var isExist = false
+            for oldColumnName in oldColumnNames  {
+                if columnName == oldColumnName {
+                    isExist = true
+                    break
+                }
+            }
+            
+            if !isExist {
+                do {
+                    try database?.run(table.addColumn(Expression<String?>(columnName)))
+                } catch  {
+                    
+                }
+            }
+        } catch {
+            sqlitePrint(error)
+        }
     }
 }

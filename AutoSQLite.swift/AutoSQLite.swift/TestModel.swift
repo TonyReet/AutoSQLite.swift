@@ -16,6 +16,7 @@ class TestModel: SQLiteModel {
     var age     : Int = 0
     var pkid    : Int = 0//PRIMARY KEY ID,这个不能是optional类型
     var ignore  : String = ""//需要忽略的属性
+    var addAge  : Int = 0
     
     //后面需要支持的类型
     //    var optionalString : String?
