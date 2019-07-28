@@ -21,15 +21,22 @@ open class SQLiteDataBaseTool: NSObject{
     /// - Returns: sql类型
     public class func sqlType(_ nativeType : Any.Type)->String {
         
-        if nativeType is Int.Type {
-            return "INTEGER"
-        }else if nativeType is Float.Type, nativeType is Double.Type {
-            return "DOUBLE"
-        }else if nativeType is NSString.Type || nativeType is String.Type || nativeType is Character.Type {
-            return "TEXT"
+        var returnString = ""
+        
+        if nativeType is Int.Type || nativeType is Int?.Type{
+            returnString = "INTEGER"
+        }else if nativeType is Float.Type || nativeType is Double.Type || nativeType is Float?.Type || nativeType is Double?.Type {
+            returnString = "DOUBLE"
+        }else if nativeType is NSString.Type || nativeType is String.Type || nativeType is Character.Type || nativeType is NSString?.Type || nativeType is String?.Type || nativeType is Character?.Type {
+            returnString = "TEXT"
+        }else if nativeType is Bool.Type || nativeType is Bool?.Type {
+            returnString = "TINYINT"
+        }else{
+            assert(true, "sqlType:不支持的类型")
         }
         
-        return ""
+        print("返回类型" + returnString)
+        return returnString
     }
     
     /// 移除字符串的最后一个字符

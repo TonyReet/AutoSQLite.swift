@@ -20,13 +20,13 @@ class TestModel: SQLiteModel {
     var newAge  : Int = 0
     
     //后面需要支持的类型
-    //    var optionalString : String?
-    //    var optionalInt : Int?
-    //
-    //    var optionaldate:NSDate?
-    //    var optionalisTest:Bool?
-    //    var optionalDouble:Double?
-    //    var optionalFloat:Float?
+    var optionalString : String?
+    var optionalInt : Int?
+
+    var optionalisTest:Bool?
+    var optionalDouble:Double?
+    var optionalFloat:Float?
+    
     //    var testModels:[TestModel]? = []
     
     

@@ -33,89 +33,151 @@ open class SQLPropertyModel: NSObject {
         self.isPrimaryKey = isPrimaryKey
 
         if type is Int?.Type {
-            self.express = Expression<Int64?>(key)
-        }else if type is Float?.Type, type is Double?.Type {
+            self.express = Expression<Int?>(key)
+        }else if type is Float?.Type {
+            self.express = Expression<Double?>(key)
+        }else if type is Double?.Type {
             self.express = Expression<Double?>(key)
         }else if type is Bool?.Type {
             self.express = Expression<Bool?>(key)
         }else if type is String?.Type {
-            self.express = Expression<String>(key)
+            self.express = Expression<String?>(key)
         }else if type is Int.Type {
-            self.express = Expression<Int64>(key)
-        }else if type is Float.Type, type is Double.Type {
+            self.express = Expression<Int>(key)
+        }else if type is Float.Type {
+            self.express = Expression<Double>(key)
+        }else if type is Double.Type {
             self.express = Expression<Double>(key)
         }else if type is Bool.Type {
             self.express = Expression<Bool>(key)
         }else if type is String.Type {
             self.express = Expression<String>(key)
         }else {
-            self.express =  Expression<String>(key)
+            self.express = Expression<AnyObject>(key)
+            assert(true, "SQLPropertyModel Init:不支持的类型")
         }
     }
     
     
     public func sqlSetter(_ object:SQLiteModel) -> SQLite.Setter {
         
-        let value:Any? = object.value(forKey: key)
+        //let value:Any? = object.value(forKey: key)
+        let mirror = Mirror(reflecting: object)
+        
+        guard let displayStyle = mirror.displayStyle else {
+            return express as! Setter
+        }
+        
+        guard mirror.children.count > 0 else {
+            return express as! Setter
+        }
+        
+        var value:Any?
+        for child in mirror.children{
+            if key == child.label { //注意字典只能保存AnyObject类型。
+                value = child.value
+            }
+        }
+        
+        
         if type is Int?.Type {
-            return express as! Expression<Int64?> <- value as? Int64
-        }else if type is Float.Type, type is Double.Type {
+            return express as! Expression<Int?> <- value as? Int
+        }
+        else if type is Float?.Type {
+            return express as! Expression<Double?> <- Double((value as? Float)!)
+        }
+        else if type is Double?.Type {
             return express as! Expression<Double?> <- value as? Double
         }else if type is Bool?.Type {
             return express as! Expression<Bool?> <- value as? Bool
         }else if type is String?.Type {
-            return express as! Expression<String> <- (value as? String)!
+            return express as! Expression<String?> <- (value as? String)!
         }else if type is Int.Type {
-            return express as! Expression<Int64> <- value as! Int64
-        }else if type is Float.Type, type is Double.Type {
+            return express as! Expression<Int> <- value as! Int
+        }else if type is Float.Type {
+            return express as! Expression<Double> <- Double(value as! Float)
+        }else if  type is Double.Type {
             return express as! Expression<Double> <- value as! Double
         }else if type is Bool.Type {
             return express as! Expression<Bool> <- value as! Bool
-        }else {
+        }else if type is String.Type {
             return express as! Expression<String> <- value as! String
+        }else {
+            assert(true, "SQLPropertyModel sqlSetter:不支持的类型")
+            return express as! Setter
         }
     }
 
     public func sqlRowToModel(_ object:SQLiteModel,row:Row) {
         if type is Int?.Type {
-            object.setValue(row[express as! Expression<Int64?>], forKey: key)
-        }else if type is Float?.Type, type is Double?.Type {
+            object.setValue(row[express as! Expression<Int?>], forKey: key)
+        }else if type is Float?.Type {
+            object.setValue(row[express as! Expression<Double?>], forKey: key)
+        }else if type is Double?.Type {
             object.setValue(row[express as! Expression<Double?>], forKey: key)
         }else if type is Bool?.Type {
             object.setValue(row[express as! Expression<Bool?>], forKey: key)
         }else if type is String?.Type {
-            object.setValue(row[express as! Expression<String>], forKey: key)
+            object.setValue(row[express as! Expression<String?>], forKey: key)
         }else if type is Int.Type {
-            object.setValue(row[express as! Expression<Int64>], forKey: key)
-        }else if type is Float.Type, type is Double.Type {
+            object.setValue(row[express as! Expression<Int>], forKey: key)
+        }else if type is Float.Type {
+            object.setValue(row[express as! Expression<Double>], forKey: key)
+        }else if type is Double.Type {
             object.setValue(row[express as! Expression<Double>], forKey: key)
         }else if type is Bool.Type {
             object.setValue(row[express as! Expression<Bool>], forKey: key)
-        }else {
+        }else if type is String.Type {
             object.setValue(row[express as! Expression<String>], forKey: key)
+        }else {
+            assert(true, "SQLPropertyModel sqlRowToModel:不支持的类型")
         }
     }
     
 
     public func sqlFilter(_ object:SQLiteModel) -> Expression<Bool> {
         
-        let value:Any? = object.value(forKey: key)
+        //let value:Any? = object.value(forKey: key)
+        let mirror = Mirror(reflecting: object)
+        
+        guard let displayStyle = mirror.displayStyle else {
+            return express as! Expression<Bool>
+        }
+        
+        guard mirror.children.count > 0 else {
+            return express as! Expression<Bool>
+        }
+        
+        var value:Any?
+        for child in mirror.children{
+            if key == child.label { //注意字典只能保存AnyObject类型。
+               value = child.value
+            }
+        }
+        
         if type is Int?.Type {
-            return (express as! Expression<Int64> == (value as? Int64)!)
-        }else if type is Float?.Type, type is Double.Type {
+            return (express as! Expression<Int> == (value as? Int)!)
+        }else if type is Float?.Type {
+            return (express as! Expression<Double> == Double((value as? Float)!))
+        }else if type is Double?.Type {
             return (express as! Expression<Double> == (value as? Double)!)
         }else if type is Bool?.Type {
             return (express as! Expression<Bool> == (value as? Bool)!)
         }else if type is String?.Type {
             return (express as! Expression<String> == (value as? String)!)
         }else if type is Int.Type {
-            return (express as! Expression<Int64> == value as! Int64)
-        }else if type is Float.Type, type is Double.Type {
-            return (express as! Expression<Double> == value as! Double)
+            return (express as! Expression<Int> == value as! Int)
+        }else if type is Float.Type {
+            return (express as! Expression<Double> == (Double(value as! Float)))
+        }else if type is Double.Type {
+            return (express as! Expression<Double> == (value as! Double))
         }else if type is Bool.Type {
             return (express as! Expression<Bool> == value as! Bool)
-        }else {
+        }else if type is String.Type {
             return (express as! Expression<String> == value as! String)
+        }else {
+            assert(true, "SQLPropertyModel sqlFilter:不支持的类型")
+            return express as! Expression<Bool>
         }
     }
     
@@ -124,20 +186,28 @@ open class SQLPropertyModel: NSObject {
 
         let isPkid = self.isPrimaryKey
         if type is Int?.Type {
-            builder.column((express as? Expression<Int64>)!, defaultValue: 0)
-        }else if type is Float?.Type, type is Double?.Type {
-            builder.column((express as? Expression<Double>)!, defaultValue: 0)
+            builder.column((express as! Expression<Int?>), defaultValue: 0)
+        }else if type is Float?.Type {
+            builder.column((express as! Expression<Double?>), defaultValue: 0)
+        }else if type is Double?.Type {
+            builder.column((express as! Expression<Double?>), defaultValue: 0)
         }else if type is Bool?.Type {
-            builder.column((express as? Expression<Bool>)!, defaultValue: false)
+            builder.column((express as! Expression<Bool?>), defaultValue: false)
         }else if type is String?.Type {
-            builder.column(express as! Expression<String>, defaultValue: "")
+            builder.column(express as! Expression<String?>, defaultValue: "")
         }else if type is Int.Type {
             if isPkid {
-                builder.column(express as! Expression<Int64>, primaryKey: true)
+                builder.column(express as! Expression<Int>, primaryKey: true)
             } else {
-                builder.column(express as! Expression<Int64>, defaultValue: 0)
+                builder.column(express as! Expression<Int>, defaultValue: 0)
             }
-        }else if type is Float.Type, type is Double.Type {
+        }else if type is Float.Type {
+            if isPkid {
+                builder.column(express as! Expression<Double>, primaryKey: true)
+            } else {
+                builder.column(express as! Expression<Double>, defaultValue: 0)
+            }
+        }else if type is Double.Type {
             if isPkid {
                 builder.column(express as! Expression<Double>, primaryKey: true)
             } else {
@@ -149,12 +219,14 @@ open class SQLPropertyModel: NSObject {
             } else {
                 builder.column(express as! Expression<Bool>, defaultValue: false)
             }
-        }else {
+        }else if type is String.Type {
             if isPkid {
                 builder.column(express as! Expression<String>, primaryKey: true)
             } else {
                 builder.column(express as! Expression<String>, defaultValue: "")
             }
+        }else{
+            assert(true, "SQLPropertyModel sqlBuildRow:不支持的类型")
         }
     }
     

@@ -68,10 +68,10 @@ open class SQLMirrorModel: NSObject {
         }
         
         switch displayStyle {
-        case .class:
+        case .class,.struct:
             return SQLMirrorModel(primaryKey:primaryKey,properties:sqlProperties)
         default:
-            print("不支持的类型")
+            print("operateByMirror:不支持的类型")
             return nil
         }
     }

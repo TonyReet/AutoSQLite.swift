@@ -40,6 +40,12 @@ class SQLiteOperateVc: UIViewController {
         testModel.weight    = 140
         testModel.newAge    = 19
         
+        testModel.optionalInt = 1
+        testModel.optionalFloat = 2.0
+        testModel.optionalDouble = 3.0
+        testModel.optionalisTest = true
+        testModel.optionalString = "optionalString"
+        
         return testModel;
     }()
     
@@ -92,6 +98,7 @@ extension SQLiteOperateVc{
     
     func updateOperate() {
         testModel.name = "Reet"
+        testModel.optionalString = "updateOptionalString"
         manager.update(testModel, fromTable: sqlTableName)
     }
     
