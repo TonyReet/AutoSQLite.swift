@@ -442,9 +442,8 @@ extension SQLiteDataBase {
             
             let sqlStr = "SELECT COUNT(*) FROM \(tableName) where \(object.primaryKey()) = \(String(describing: pkidValue))"
             
-//            sqlitePrint("sql语句:\(sqlStr)")
             let isExists = try database?.scalar(sqlStr) as! Int64 > 0
-//            sqlitePrint("查询数据:\(isExists == true ? "存在" : "不存在")")
+
             return isExists
         }catch {
             sqlitePrint(error)
@@ -927,10 +926,35 @@ extension SQLiteDataBase {
         //为了保持统一
         for modelResult in modelResults {
 
+            // 利用反射取值
             var result = [String:AnyObject]()
+        
+            let mirror = Mirror(reflecting: modelResult)
+            
+            guard let displayStyle = mirror.displayStyle else {
+                continue
+            }
+            
+            guard mirror.children.count > 0 else {
+                continue
+            }
             
             for sqlPropertie in sqlMirrorModel.sqlProperties {
-                result[sqlPropertie.key] = modelResult.value(forKey: sqlPropertie.key) as AnyObject
+            
+                // 利用反射取值，不使用KVC，因为KVC不支持optional
+                var value:Any?
+                for child in mirror.children{
+                    if sqlPropertie.key == child.label { //注意字典只能保存AnyObject类型。
+                        value = sqlPropertie.value
+                        break
+                    }
+                }
+
+                if value == nil {
+                    value = modelResult.value(forKey: sqlPropertie.key)
+                }
+                
+                result[sqlPropertie.key] = value as AnyObject
             }
             
             results.append(result)

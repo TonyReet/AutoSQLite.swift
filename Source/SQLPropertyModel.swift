@@ -109,28 +109,51 @@ open class SQLPropertyModel: NSObject {
     }
 
     public func sqlRowToModel(_ object:SQLiteModel,row:Row) {
-        if type is Int?.Type {
-            object.setValue(row[express as! Expression<Int?>], forKey: key)
-        }else if type is Float?.Type {
-            object.setValue(row[express as! Expression<Double?>], forKey: key)
-        }else if type is Double?.Type {
-            object.setValue(row[express as! Expression<Double?>], forKey: key)
-        }else if type is Bool?.Type {
-            object.setValue(row[express as! Expression<Bool?>], forKey: key)
-        }else if type is String?.Type {
-            object.setValue(row[express as! Expression<String?>], forKey: key)
-        }else if type is Int.Type {
-            object.setValue(row[express as! Expression<Int>], forKey: key)
-        }else if type is Float.Type {
-            object.setValue(row[express as! Expression<Double>], forKey: key)
-        }else if type is Double.Type {
-            object.setValue(row[express as! Expression<Double>], forKey: key)
-        }else if type is Bool.Type {
-            object.setValue(row[express as! Expression<Bool>], forKey: key)
-        }else if type is String.Type {
-            object.setValue(row[express as! Expression<String>], forKey: key)
-        }else {
-            assert(true, "SQLPropertyModel sqlRowToModel:不支持的类型")
+        
+        /// 确定值使用KVC处理
+        if object.responds(to: Selector(key)) {
+            if type is Int.Type {
+                object.setValue(row[express as! Expression<Int>], forKey: key)
+            }else if type is Float.Type {
+                object.setValue(row[express as! Expression<Double>], forKey: key)
+            }else if type is Double.Type {
+                object.setValue(row[express as! Expression<Double>], forKey: key)
+            }else if type is Bool.Type {
+                object.setValue(row[express as! Expression<Bool>], forKey: key)
+            }else if type is String.Type {
+                object.setValue(row[express as! Expression<String>], forKey: key)
+            }else {
+                assert(true, "SQLPropertyModel sqlRowToModel:不支持的类型")
+            }
+        }else{// 可选值使用runtime获取内存地址，修改内存地址对应的值
+            guard let ivar: Ivar = class_getInstanceVariable(object.classForCoder, key) else{
+                return
+            }
+            let fieldOffset = ivar_getOffset(ivar)
+            
+            let pointerToInstance = Unmanaged.passUnretained(object).toOpaque()
+            
+            if type is Int?.Type {
+                let pointerToField = unsafeBitCast(pointerToInstance + fieldOffset, to: UnsafeMutablePointer<Int?>.self)
+
+                pointerToField.pointee = value as? Int
+            }else if type is Float?.Type {
+                let pointerToField = unsafeBitCast(pointerToInstance + fieldOffset, to: UnsafeMutablePointer<Float?>.self)
+
+                pointerToField.pointee = value as? Float
+            }else if type is Double?.Type {
+                let pointerToField = unsafeBitCast(pointerToInstance + fieldOffset, to: UnsafeMutablePointer<Double?>.self)
+
+                pointerToField.pointee = value as? Double
+            }else if type is Bool?.Type {
+                let pointerToField = unsafeBitCast(pointerToInstance + fieldOffset, to: UnsafeMutablePointer<Bool?>.self)
+
+                pointerToField.pointee = value as? Bool
+            }else if type is String?.Type {
+                let pointerToField = unsafeBitCast(pointerToInstance + fieldOffset, to: UnsafeMutablePointer<String?>.self)
+
+                pointerToField.pointee = value as? String
+            }
         }
     }
     
@@ -229,5 +252,4 @@ open class SQLPropertyModel: NSObject {
             assert(true, "SQLPropertyModel sqlBuildRow:不支持的类型")
         }
     }
-    
 }
