@@ -90,6 +90,8 @@ SQLPropertyModel.swift
 
 
 ## upgrade
+####19.7.30    
+新增可选类型(optional)
 ####19.4.23    
 新增字段时，直接在表里面添加，避免报错
 
