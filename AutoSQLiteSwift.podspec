@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "AutoSQLiteSwift"
-  s.version      = '0.0.8'
+  s.version      = '0.0.9'
   s.license      = "MIT"
   s.summary      = '自动解析'
 
@@ -18,6 +18,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Source/*.swift'
 
-  s.dependency 'SQLite.swift', '~> 0.11.5'
+  s.dependency 'SQLite.swift', '~> 0.12.2'
 
 end

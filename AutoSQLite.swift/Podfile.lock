@@ -1,9 +1,9 @@
 PODS:
   - AutoSQLiteSwift (0.0.8):
-    - SQLite.swift (~> 0.11.5)
-  - SQLite.swift (0.11.5):
-    - SQLite.swift/standard (= 0.11.5)
-  - SQLite.swift/standard (0.11.5)
+    - SQLite.swift (~> 0.12.2)
+  - SQLite.swift (0.12.2):
+    - SQLite.swift/standard (= 0.12.2)
+  - SQLite.swift/standard (0.12.2)
 
 DEPENDENCIES:
   - AutoSQLiteSwift (from `../`)
@@ -17,8 +17,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AutoSQLiteSwift: 8366c4253e872abe095e42af797ef0b2af12397a
-  SQLite.swift: 6e5356850bb1791459f8c16d6ee9195b28714a2e
+  AutoSQLiteSwift: be73899cbb6d9ced00d64fdba95fa137a55fbc8b
+  SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
 
 PODFILE CHECKSUM: ad91a756e6efc927aa8db394475622c8e990f195
 
