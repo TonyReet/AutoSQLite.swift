@@ -35,7 +35,7 @@ open class SQLiteDataBaseTool: NSObject{
             assert(true, "sqlType:不支持的类型")
         }
         
-        print("返回类型" + returnString)
+        sqlitePrint("返回类型" + returnString)
         return returnString
     }
     
@@ -45,6 +45,24 @@ open class SQLiteDataBaseTool: NSObject{
     /// - Returns: 处理完的字符串
     public class func removeLastStr(_ oldStr:String)->String{
         return String(oldStr[..<oldStr.index(before: oldStr.endIndex)])
+    }
+    
+    /// 移除字符串的最后一个key字符
+    ///
+    /// - Parameter oldStr:未处理的字符串
+    /// - Parameter keyStr:需要移除的key
+    /// - Returns: 处理完的字符串
+    public class func removeLast(_ oldStr:String,_ keyStr:String)->String{
+        let lastKey = String(oldStr.suffix(keyStr.count))
+        
+        let isLastSmae = lastKey == keyStr
+        
+        // 如果最后的字符串不是keyStr
+        if (!isLastSmae){
+            return oldStr
+        }
+        
+        return String(oldStr.prefix(oldStr.count - keyStr.count))
     }
     
     

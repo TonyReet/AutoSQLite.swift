@@ -33,16 +33,35 @@ class SQLiteOperateVc: UIViewController {
     // 测试的model
     lazy var testModel: TestModel = {
         let testModel =  TestModel()
-        testModel.pkid      = 1
         testModel.age       = 18
         testModel.name      = "Tony"
         testModel.ignore    = "ignore"
         testModel.weight    = 140
         testModel.newAge    = 19
+//        testModel.uuid      = "testuuid1"
         
         testModel.optionalInt = 1
         testModel.optionalFloat = 2.0
         testModel.optionalDouble = 3.0
+        testModel.optionalisTest = true
+        testModel.optionalString = "optionalString"
+        
+        return testModel;
+    }()
+    
+    // 测试的model
+    lazy var testModel1: TestModel = {
+        let testModel =  TestModel()
+
+        testModel.age       = 19
+        testModel.name      = "Tony1"
+        testModel.ignore    = "ignore"
+        testModel.weight    = 141
+        testModel.newAge    = 20
+        
+        testModel.optionalInt = 2
+        testModel.optionalFloat = 3.0
+        testModel.optionalDouble = 4.0
         testModel.optionalisTest = true
         testModel.optionalString = "optionalString"
         
@@ -92,13 +111,16 @@ class SQLiteOperateVc: UIViewController {
 extension SQLiteOperateVc{
     func insertOperate() {
         testModel.name = "Tony"
+        
         manager.insert(testModel , intoTable: sqlTableName)
+        manager.insert(testModel1 , intoTable: sqlTableName)
     }
     
     
     func updateOperate() {
         testModel.name = "Reet"
         testModel.optionalString = "updateOptionalString"
+        
         manager.update(testModel, fromTable: sqlTableName)
     }
     
@@ -109,15 +131,22 @@ extension SQLiteOperateVc{
     
     
     func selectOperate() {
-        let results = manager.select(testModel, fromTable: sqlTableName)
-        
-        if results.count == 0 {
-            print("没有查询到数据")
+        guard let results = manager.select(testModel, fromTable: sqlTableName) else {
+            sqlitePrint("没有查询到数据")
             return
         }
 
         for result in results {
-            print("查询的数据\(result)")
+//            sqlitePrint("查询的数据\(result)")
+//            guard let name = result["name"],let primaryKey = result[testModel.primaryKey()] else {
+//                continue
+//            }
+//            
+//            if ((name as! String) == testModel.name){
+//                return
+//            }
+//            
+//            testModel.pkid = (primaryKey as! Int)
         }
     }
     

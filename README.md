@@ -66,12 +66,12 @@ SQLPropertyModel.swift
 ```
         // 查询
         guard let results = manager.select(testModel, fromTable: "testTableName") else {
-            print("没有查询到数据")
+            sqlitePrint("没有查询到数据")
             return
         }
 
         for result in results {
-            print("查询的数据\(result)")
+            sqlitePrint("查询的数据\(result)")
         }
         
         或者
@@ -80,10 +80,10 @@ SQLPropertyModel.swift
 
         if results.count > 0{
             for result in results {
-                print("查询的数据\(result)")
+                sqlitePrint("查询的数据\(result)")
             }
         }else {
-            print("没有查询到数据")
+            sqlitePrint("没有查询到数据")
         }
 
 ```

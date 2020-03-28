@@ -14,7 +14,7 @@ class TestModel: SQLiteModel {
     
     var name    : String = ""
     var age     : Int = 0
-    var pkid    : Int = 0//PRIMARY KEY ID,这个不能是optional类型
+    //var uuid    : String?//表内唯一的标识，用户和server关联或者自查询的时候使用，如果没有设置，可通过查询后获取
     var ignore  : String = ""//需要忽略的属性
     var weight  : Float = 0
     var newAge  : Int = 0
@@ -26,16 +26,19 @@ class TestModel: SQLiteModel {
     var optionalisTest:Bool?
     var optionalDouble:Double?
     var optionalFloat:Float?
+
+//    /// 主键字段
+//    override func primaryKey() -> String? {
+//        return "pkid"
+//    }
     
-    //    var testModels:[TestModel]? = []
-    
-    
-    override func primaryKey() -> String {
-        return "pkid"
-    }
-    
-    override func ignoreKeys() -> [String] {
+    /// 忽略的字段，不保存
+    override func ignoreKeys() -> [String]? {
         return ["ignore"]
     }
     
+//    /// 用于查询的字段，最好是唯一，如果不存在，就需要先使用数据查询到主键以后才能更新，删除，移除
+//    override func searchKeys() -> [String]? {
+//        return ["uuid"]
+//    }
 }

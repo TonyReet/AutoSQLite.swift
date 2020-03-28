@@ -9,6 +9,36 @@
 import Foundation
 import SQLite
 
+/// 是否打开打印,true是打开,false是关闭
+let printDebug = true
+
+public func sqlitePrint(debug: Any...,
+                  function: String = #function,
+                  file: String = #file,
+                  line: Int = #line) {
+    if !printDebug {return}
+    
+    var filename = file
+    if let match = filename.range(of: "[^/]*$", options: .regularExpression) {
+        filename = String(filename[match])
+    }
+    Swift.print("Debug Log:\(filename),line:\(line),function:\(function)\n\(debug) \n")
+}
+
+public func sqlitePrint(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+    if !printDebug {return}
+
+    Swift.print(items, separator:separator, terminator: terminator)
+}
+
+public func sqlitePrint<Target>(_ items: Any..., separator: String = " ", terminator: String = "\n", to output: inout Target) where Target : TextOutputStream {
+    
+    if !printDebug {return}
+    
+    Swift.print(items, separator: separator, terminator: terminator)
+}
+
+
 public enum SQLiteOperateType: Int {
     case wrapper = 0//sqlite封装的类型(SQLite.Swift封装的类型)
     case statement = 1//sql语句操作的类型
@@ -18,9 +48,6 @@ public enum SQLiteOperateType: Int {
 open class SQLiteDataBase: NSObject {
     //创建单例
     public static let shared           = SQLiteDataBase()
-    
-    /// 是否打开打印,true是打开,false是关闭
-    public var printDebug              = true
     
     //使用操作的类型，默认使用SQLite.swift的封装方式
     public var operateType: SQLiteOperateType = .wrapper
@@ -57,7 +84,7 @@ open class SQLiteDataBase: NSObject {
             sqliteDataBase.databasePath = "\(defaultPath)/\(default_DataBase_Name).sqlite3"
         }
         
-        sqliteDataBase.sqlitePrint("数据库文件地址:\(String(describing: sqliteDataBase.databasePath))")
+        sqlitePrint("数据库文件地址:\(String(describing: sqliteDataBase.databasePath))")
         
         return sqliteDataBase
     }
@@ -133,7 +160,7 @@ open class SQLiteDataBase: NSObject {
         }
     }
     
-    public class func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
+    public class func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]?{
         let sqliteDataBase = SQLiteDataBase.shared
         
         switch sqliteDataBase.operateType {
@@ -225,10 +252,10 @@ open class SQLiteDataBase: NSObject {
     ///   - sqlWhere: sql查询语句
     /// - Returns: 返回结果
     public func select(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
-        return select_statement(fromTable:tableName,sqlWhere: sqlWhere)
+        return select_statementWithSQL(fromTable:tableName,sqlWhere: sqlWhere)
     }
     
-    public func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
+    public func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]? {
         switch self.operateType {
         case .statement:
             return select_statement(object,fromTable: tableName)
@@ -280,20 +307,11 @@ open class SQLiteDataBase: NSObject {
     // 检查tableName是否有效
     public func checkNameIsVerify(_ name: String) -> Bool {
         if name.count == 0 {
-            sqlitePrint("name: \(name) format error")
+             sqlitePrint("name: \(name) format error")
             return false
         }
         
         return true
-    }
-    
-    /// 统一的打印
-    ///
-    /// - Parameter printObj: 打印的内容
-    public func sqlitePrint(_ printObj:Any){
-        if printDebug == true {
-            print(printObj)
-        }
     }
 }
 
@@ -341,11 +359,11 @@ extension SQLiteDataBase {
     public class func selectAll_statement(fromTable tableName: String)->[[String:AnyObject]]{
         let sqliteDataBase = SQLiteDataBase.shared
         
-        return sqliteDataBase.select_statement(fromTable:tableName,sqlWhere: nil)
+        return sqliteDataBase.select_statementWithSQL(fromTable:tableName,sqlWhere: nil)
     }
     
     
-    public class func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
+    public class func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]?{
         let sqliteDataBase = SQLiteDataBase.shared
         
         return sqliteDataBase.select_statement(object,fromTable:tableName)
@@ -399,7 +417,7 @@ extension SQLiteDataBase {
         
 
         //主键
-        var primaryKey = ""
+        let primaryKey = sqlMirrorModel.sqlPrimaryKey
         
         //拼接动态字段
         var keyStr = ""
@@ -407,16 +425,8 @@ extension SQLiteDataBase {
             
             let key = sqlPropertie.key
             let type = sqlPropertie.type
-            let forPrimaryKey = sqlMirrorModel.sqlPrimaryKey
-            
-            //如果是primaryKey 就返回
-            guard key != forPrimaryKey else {
-                primaryKey = forPrimaryKey
-                continue
-            }
-            
+
             keyStr += "\(key) \(SQLiteDataBaseTool.sqlType(type)),"
-            
         }
 
         //添加主键
@@ -429,37 +439,111 @@ extension SQLiteDataBase {
         execute(sqlStr)
     }
     
-    public func isExisit(_ object: SQLiteModel,tableName:String) -> Bool{
+    public func isExisitObject(_ object: SQLiteModel,tableName:String) -> (Bool, String?){
         guard database != nil else {
-            return false
+            return (false,nil)
         }
 
-        do {
-            //TODO: 主键暂定为Int
-            guard let pkidValue = object.value(forKey: object.primaryKey()) as? Int else {
-                return false
+        /* 只查询是否存在，为了统一，查询是否存在，使用select_statement
+        let sqlStr = "SELECT COUNT(*) FROM \(tableName) where \(whereStr)"
+        let isExists = try database?.scalar(sqlStr) as! Int64 > 0
+        */
+        
+        var whereStr = getObjectValuesStr(object, tableName: tableName)
+    
+        // 可以使用下面的函数，不使用效率高
+        guard let results = select_statement(object, fromTable: tableName) else {
+            return (false,nil)
+        }
+        
+        // 如果查找到多个结果，说明查找的数据不唯一，认定为没有同种结果
+        if results.count > 1 {
+            return (false,nil)
+        }
+        
+        let result = results.first
+        guard let primaryKey = object.primaryKey() else {
+            return (false,nil)
+        }
+        
+        guard let primaryValue = result![primaryKey] else {
+            return (false,nil)
+        }
+
+        object.setValue(primaryValue, forKey: primaryKey)
+        whereStr = "\(primaryKey) = \(primaryValue)"
+        
+        return (true, whereStr)
+    }
+    
+    public func getObjectValuesStr(_ object: SQLiteModel, tableName: String) -> String?{
+        if tableExists(tableName: tableName) == false {
+            return nil
+        }
+        
+        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
+            return nil
+        }
+        
+        createTable_statement(tableName,sqlMirrorModel:sqlMirrorModel)
+        
+        let primaryKey = sqlMirrorModel.sqlPrimaryKey
+        //sqlitePrint("primaryKey:\(String(describing: primaryKey))")
+        
+        let andKey = " AND "
+        var whereStr:String = ""
+
+        let searchKeys = object.searchKeys()
+        if searchKeys != nil && searchKeys!.count > 0 {
+            
+            // searchKey作为查询条件
+            for searchKey in searchKeys! {
+                for sqlPropertie in sqlMirrorModel.sqlProperties {
+                    let key = sqlPropertie.key
+
+                    if key != searchKey {
+                        continue
+                    }
+                
+                    let value = sqlPropertie.value
+                    let isNil = valueIsNil(value)
+                    
+                    if isNil == true {
+                        continue
+                    }
+                    
+                    whereStr += "\(key) = '\(value!)'\(andKey)"
+                }
             }
-            
-            let sqlStr = "SELECT COUNT(*) FROM \(tableName) where \(object.primaryKey()) = \(String(describing: pkidValue))"
-            
-            let isExists = try database?.scalar(sqlStr) as! Int64 > 0
-
-            return isExists
-        }catch {
-            sqlitePrint(error)
-            return false
+        }else {
+            for sqlPropertie in sqlMirrorModel.sqlProperties {
+                let key = sqlPropertie.key
+                let value = sqlPropertie.value
+                
+                //sqlitePrint("key:\(key),value:\(value)")
+                if (key == primaryKey) && ((value as! NSNumber).intValue == 0) {
+                    continue
+                }
+                
+                whereStr += "\(key) = '\(value!)'\(andKey)"
+            }
         }
+        
+        //sqlitePrint("whereStr:\(whereStr)")
+        whereStr = SQLiteDataBaseTool.removeLast(whereStr, andKey)
+
+        return whereStr
     }
     
     public func insert_statement(_ object: SQLiteModel, intoTable tableName: String) {
-        save_statement(object,intoTable:tableName)
+        save_statement(object,intoTable:tableName,isUpdate: false)
     }
 
     public func update_statement(_ object: SQLiteModel,intoTable tableName: String) {
-        save_statement(object,intoTable:tableName)
+        save_statement(object,intoTable:tableName,isUpdate: true)
     }
     
-    public func save_statement(_ object: SQLiteModel,intoTable tableName: String) {
+    public func save_statement(_ object: SQLiteModel,intoTable tableName: String, isUpdate: Bool) {
         guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
             return
         }
@@ -469,29 +553,28 @@ extension SQLiteDataBase {
         var keyStr   = ""
         var valueStr = ""
 
+        let (isExisit, whereStr) = isExisitObject(object, tableName: tableName)
         for sqlPropertie in sqlMirrorModel.sqlProperties {
             let key = sqlPropertie.key
-            let oldValue = sqlPropertie.value
-            
-            guard let value = oldValue else {
+            guard let value = sqlPropertie.value else {
                 continue
             }
             
-            if isExisit(object,tableName:tableName) == true {//存在
+            let isNil = valueIsNil(sqlPropertie.value)
+            
+            if isNil == true {
+                continue
+            }
+            
+            if isExisit == true {//存在
                 /// 如果字段不存在，则创建
                 addColumnIfNoExist_statement(key, tableName: tableName, type: SQLiteDataBaseTool.sqlType(sqlPropertie.type))
                 
-                let primaryKey = sqlMirrorModel.sqlPrimaryKey
+                valueStr = whereStr ?? ""
                 
-                sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
-                guard key != primaryKey else {
-                    valueStr = "\(key) = '\(value)' ,"
-                    continue
-                }
-                
-                // keyStr
+                // tmpStr
                 let tmpStr = "\(key) = '\(value)' ,"
-                
+
                 keyStr += tmpStr
             }else {//不存在
                 keyStr += (key + " ,")
@@ -500,12 +583,12 @@ extension SQLiteDataBase {
         }
         
         keyStr = SQLiteDataBaseTool.removeLastStr(keyStr)
-        valueStr = SQLiteDataBaseTool.removeLastStr(valueStr)
-        
+
         var sqlStr = ""
-        if isExisit(object,tableName:tableName) == true {//存在
+        if isExisit == true {//存在
             sqlStr = "UPDATE \(tableName) SET \(keyStr) WHERE \(valueStr)"
         }else {//不存在
+            valueStr = SQLiteDataBaseTool.removeLastStr(valueStr)
             sqlStr = "INSERT INTO \(tableName) (\(keyStr)) VALUES (\(valueStr))"
         }
 
@@ -513,56 +596,31 @@ extension SQLiteDataBase {
     }
     
     
-    public func select_statement(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
+    public func select_statementWithSQL(fromTable tableName: String,sqlWhere: String? = nil)->[[String:AnyObject]] {
         if tableExists(tableName: tableName) == false {
             return [[String:AnyObject]]()
         }
-        
+
         var sqlStr = ""
-        
+
         if let sqlWhere = sqlWhere {
             sqlStr = "SELECT * FROM \(tableName) WHERE \(sqlWhere)"
         }else{
             sqlStr = "SELECT * FROM \(tableName)"
         }
-        
+
         let results = prepare(sqlStr)
-        
+
         return results
     }
     
-    public func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]] {
-        if tableExists(tableName: tableName) == false {
-            return [[String:AnyObject]]()
+    public func select_statement(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]? {
+        guard let whereStr = getObjectValuesStr(object, tableName: tableName) else {
+            return nil
         }
         
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return [[String:AnyObject]]()
-        }
-        
-        createTable_statement(tableName,sqlMirrorModel:sqlMirrorModel)
-        
-        var whereStr:String?
-        
-        for sqlPropertie in sqlMirrorModel.sqlProperties {
-            
-            let key = sqlPropertie.key
-
-            guard let value = sqlPropertie.value else {
-                continue
-            }
-            
-            let primaryKey = sqlMirrorModel.sqlPrimaryKey
-            
-            sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
-            guard key != primaryKey else {
-                whereStr = "\(key) = '\(String(describing: value))'"
-                continue
-            }
-        }
-
         var sqlStr = ""
-        if let whereStr = whereStr {
+        if whereStr != nil {
             sqlStr = "SELECT * FROM \(tableName) WHERE \(whereStr)"
         }else{
             sqlStr = "SELECT * FROM \(tableName)"
@@ -572,7 +630,7 @@ extension SQLiteDataBase {
         
         sqlitePrint("sqlStr:\(sqlStr)")
         
-        return results
+        return results.count > 0 ? results : nil
     }
     
     public func delete_statement(fromTable tableName: String,sqlWhere: String) {
@@ -585,30 +643,7 @@ extension SQLiteDataBase {
     }
     
     public func delete_statement(_ object: SQLiteModel,fromTable tableName: String) {
-        if tableExists(tableName: tableName) == false {
-            return
-        }
-        
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return
-        }
-        
-        createTable_statement(tableName,sqlMirrorModel:sqlMirrorModel)
-        
-        var whereStr:String?
-        
-        for sqlPropertie in sqlMirrorModel.sqlProperties {
-            
-            let key = sqlPropertie.key
-            let value = sqlPropertie.value
-            let primaryKey = sqlMirrorModel.sqlPrimaryKey
-            
-            sqlitePrint("key:\(key),primaryKey:\(String(describing: primaryKey))")
-            if key == primaryKey ,let value = value {
-                whereStr = "\(key) = '\(String(describing: value))'"
-                continue
-            }
-        }
+        let whereStr = getObjectValuesStr(object,tableName: tableName)
         
         if let whereStr = whereStr {
             delete_statement(fromTable: tableName, sqlWhere: whereStr)
@@ -735,10 +770,27 @@ extension SQLiteDataBase {
                 }
             }
         } catch {
-            print(error)
+            sqlitePrint(error)
         }
         
         return elements
+    }
+    
+    func valueIsNil(_ value: AnyObject?) -> Bool{
+        // 值为空不需要处理
+        guard let value = value else {
+            return true
+        }
+
+        if value is NSNull {
+            return true
+        }
+        
+        if value.isKind(of: NSNumber.self) && ((value as! NSNumber).intValue == 0) {
+            return true
+        }
+        
+        return false
     }
 }
 
@@ -900,7 +952,7 @@ extension SQLiteDataBase {
                 _ = try database?.run(dataBaseTable.insert(sqlSetters))
             }
         } catch {
-            print(error)
+            sqlitePrint(error)
         }
     }
     
@@ -995,7 +1047,11 @@ extension SQLiteDataBase {
                     sqlPropertie.sqlRowToModel(sqLiteModel, row: data)
                 }
                 
-                if  let sqLitePriKey = sqLiteModel.value(forKey: sqLiteModel.primaryKey()) as? String,let objPriKey = object.value(forKey: sqLiteModel.primaryKey()) as? String {
+                guard let primaryKey = sqLiteModel.primaryKey() else {
+                    break
+                }
+                
+                if  let sqLitePriKey = sqLiteModel.value(forKey: primaryKey) as? String,let objPriKey = object.value(forKey: primaryKey) as? String {
                     //只提取primaryKey一致的数据
                     if sqLitePriKey == objPriKey{
                         results.append(sqLiteModel)
@@ -1007,7 +1063,7 @@ extension SQLiteDataBase {
             
             
         } catch {
-            print(error)
+            sqlitePrint(error)
         }
         
         return results
@@ -1045,7 +1101,7 @@ extension SQLiteDataBase {
             
             self.dataBaseTables.removeValue(forKey: tableName)
         } catch {
-            print(error)
+            sqlitePrint(error)
         }
     }
     
@@ -1061,7 +1117,7 @@ extension SQLiteDataBase {
             
             self.dataBaseTables.removeValue(forKey: tableName)
         } catch {
-            print(error)
+            sqlitePrint(error)
         }
 
     }

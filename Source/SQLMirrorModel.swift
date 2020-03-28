@@ -44,7 +44,6 @@ open class SQLMirrorModel: NSObject {
         
         var sqlProperties = [SQLPropertyModel]()
         
-        var primaryKey = ""
         for child in mirror.children{
             let value = child.value
             let vMirror = Mirror(reflecting: value)  // 通过值来创建属性的反射
@@ -53,13 +52,12 @@ open class SQLMirrorModel: NSObject {
                 
                 var isPrimaryKey = false
                 if object.primaryKey() == key {
-                    primaryKey = key
                     isPrimaryKey = true
                 }
 
                 let mirrorModel = SQLPropertyModel(type: vMirror.subjectType,key:key,value:value as AnyObject, isPrimaryKey: isPrimaryKey)
 
-                guard object.ignoreKeys().contains(key) == false else {
+                guard let ignoreKeys = object.ignoreKeys(),ignoreKeys.contains(key) == false else {
                     continue
                 }
                 
@@ -67,11 +65,16 @@ open class SQLMirrorModel: NSObject {
             }
         }
         
+        guard let primaryKey = object.primaryKey() else {
+            sqlitePrint("没有设置主键")
+            return nil
+        }
+        
         switch displayStyle {
         case .class,.struct:
             return SQLMirrorModel(primaryKey:primaryKey,properties:sqlProperties)
         default:
-            print("operateByMirror:不支持的类型")
+            sqlitePrint("operateByMirror:不支持的类型")
             return nil
         }
     }
