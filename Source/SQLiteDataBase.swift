@@ -461,18 +461,6 @@ extension SQLiteDataBase {
             return (false,nil)
         }
         
-        let result = results.first
-        guard let primaryKey = object.primaryKey() else {
-            return (false,nil)
-        }
-        
-        guard let primaryValue = result![primaryKey] else {
-            return (false,nil)
-        }
-
-        object.setValue(primaryValue, forKey: primaryKey)
-        whereStr = "\(primaryKey) = \(primaryValue)"
-        
         return (true, whereStr)
     }
     

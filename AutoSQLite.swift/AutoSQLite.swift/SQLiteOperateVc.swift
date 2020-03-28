@@ -38,7 +38,7 @@ class SQLiteOperateVc: UIViewController {
         testModel.ignore    = "ignore"
         testModel.weight    = 140
         testModel.newAge    = 19
-//        testModel.uuid      = "testuuid1"
+        testModel.uuid      = "testuuid1"
         
         testModel.optionalInt = 1
         testModel.optionalFloat = 2.0
