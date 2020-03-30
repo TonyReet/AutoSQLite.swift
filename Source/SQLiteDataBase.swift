@@ -481,7 +481,7 @@ extension SQLiteDataBase {
         let andKey = " AND "
         var whereStr:String = ""
 
-        let searchKeys = object.searchKeys()
+        let searchKeys = object.uniqueKeys()
         if searchKeys != nil && searchKeys!.count > 0 {
             
             // searchKey作为查询条件

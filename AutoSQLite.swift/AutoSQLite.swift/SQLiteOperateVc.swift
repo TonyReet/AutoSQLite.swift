@@ -135,19 +135,8 @@ extension SQLiteOperateVc{
             sqlitePrint("没有查询到数据")
             return
         }
-
-        for result in results {
-//            sqlitePrint("查询的数据\(result)")
-//            guard let name = result["name"],let primaryKey = result[testModel.primaryKey()] else {
-//                continue
-//            }
-//            
-//            if ((name as! String) == testModel.name){
-//                return
-//            }
-//            
-//            testModel.pkid = (primaryKey as! Int)
-        }
+        
+        sqlitePrint("查询到数据:\(results)")
     }
     
     

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "AutoSQLiteSwift"
-  s.version      = '0.0.9'
+  s.version      = '0.0.10'
   s.license      = "MIT"
   s.summary      = '自动解析'
 

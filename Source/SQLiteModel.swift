@@ -29,8 +29,8 @@ open class SQLiteModel: NSObject {
         return nil
     }
     
-    /// 用于查询的字段，最好是唯一，如果不存在，就需要先使用数据查询到主键以后才能更新，删除，移除
-    open func searchKeys() -> [String]? {
+    /// 唯一的字段，如果不存在，就需要先使用数据查询到主键以后才能更新，删除，移除
+    open func uniqueKeys() -> [String]? {
         return nil
     }
 }
