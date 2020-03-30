@@ -60,8 +60,6 @@ open class SQLPropertyModel: NSObject {
     
     
     public func sqlSetter(_ object:SQLiteModel) -> SQLite.Setter {
-        
-        //let value:Any? = object.value(forKey: key)
         let mirror = Mirror(reflecting: object)
         
         guard let displayStyle = mirror.displayStyle else {
@@ -72,10 +70,10 @@ open class SQLPropertyModel: NSObject {
             return express as! Setter
         }
         
-        var value:Any?
+        var value:AnyObject?
         for child in mirror.children{
             if key == child.label { //注意字典只能保存AnyObject类型。
-                value = child.value
+                value = child.value as? AnyObject
             }
         }
         
@@ -91,7 +89,9 @@ open class SQLPropertyModel: NSObject {
         }else if type is Bool?.Type {
             return express as! Expression<Bool?> <- value as? Bool
         }else if type is String?.Type {
-            return express as! Expression<String?> <- (value as? String)!
+            let isNil = sqlValueIsNil(value)
+            
+            return express as! Expression<String?> <- (isNil == true ? "":(value as? String))
         }else if type is Int.Type {
             return express as! Expression<Int> <- value as! Int
         }else if type is Float.Type {
@@ -108,6 +108,15 @@ open class SQLPropertyModel: NSObject {
         }
     }
 
+    func sqlValueIsNil(_ value: AnyObject?) -> Bool{
+        if value == nil || value is NSNull {
+            sqlitePrint("SQLPropertyModel sqlSetter:value 为 nil")
+            return false
+        }
+        
+        return true
+    }
+    
     public func sqlRowToModel(_ object:SQLiteModel,row:Row) {
         
         /// 确定值使用KVC处理

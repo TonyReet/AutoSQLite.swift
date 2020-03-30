@@ -38,19 +38,9 @@ public func sqlitePrint<Target>(_ items: Any..., separator: String = " ", termin
     Swift.print(items, separator: separator, terminator: terminator)
 }
 
-
-public enum SQLiteOperateType: Int {
-    case wrapper = 0//sqlite封装的类型(SQLite.Swift封装的类型)
-    case statement = 1//sql语句操作的类型
-}
-
-
 open class SQLiteDataBase: NSObject {
     //创建单例
     public static let shared           = SQLiteDataBase()
-    
-    //使用操作的类型，默认使用SQLite.swift的封装方式
-    public var operateType: SQLiteOperateType = .wrapper
     
     fileprivate let default_DataBase_Name   = "database"
     
@@ -91,97 +81,41 @@ open class SQLiteDataBase: NSObject {
     
     // MARK: - 创建表
     public class func createTable(_ tableName: String,object:SQLiteModel) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
-            createTable_statement(tableName,object:object)
-        case .wrapper:
-            createTable_wrapper(tableName,object:object)
-        }
+        createTable_statement(tableName,object:object)
     }
     
     // MARK: - 插入数据
     public class func insert(object: SQLiteModel, intoTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             insert_statement(object,intoTable:tableName)
-        case .wrapper:
-            insert_wrapper(object,intoTable:tableName)
-        }
     }
     
     public class func insertList(objectList: [SQLiteModel], intoTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             insertList_statement(objectList,intoTable:tableName)
-        case .wrapper:
-            insertList_wrapper(objectList,intoTable:tableName)
-        }
     }
     
     
     // MARK: - 更新数据
     public class func update(_ object: SQLiteModel,fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             update_statement(object,fromTable:tableName)
-        case .wrapper:
-            update_wrapper(object,fromTable:tableName)
-        }
     }
     
     public class func updateList(objectList: [SQLiteModel], fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             updateList_statement(objectList,fromTable:tableName)
-        case .wrapper:
-            updateList_wrapper(objectList,fromTable:tableName)
-        }
     }
     
     // MARK: - 查询数据
     public class func selectAll(fromTable tableName: String)->[[String:AnyObject]]{
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             return selectAll_statement(fromTable: tableName)
-        case .wrapper:
-            return selectAll_wrapper(fromTable: tableName)
-        }
     }
     
     public class func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]?{
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             return select_statement(object,fromTable:tableName)
-        case .wrapper:
-            return select_wrapper(object,fromTable:tableName)
-        }
     }
     
     
     // MARK: - 删除数据
     public class func delete(_ object: SQLiteModel,fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             delete_statement(object,fromTable:tableName)
-        case .wrapper:
-            delete_wrapper(object,fromTable:tableName)
-        }
     }
     
     public class func deleteWhere(_ sqlWhere: String,fromTable tableName: String) {
@@ -189,14 +123,7 @@ open class SQLiteDataBase: NSObject {
     }
     
     public class func drop(dropTable tableName: String){
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        switch sqliteDataBase.operateType {
-        case .statement:
             drop_statement(dropTable:tableName)
-        case .wrapper:
-            drop_wrapper(dropTable:tableName)
-        }
     }
     
     
@@ -207,13 +134,7 @@ open class SQLiteDataBase: NSObject {
     ///   - tableName: 创建的表名
     ///   - mirrorModels:转换完的model
     public func createTable(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
-        
-        switch self.operateType {
-        case .statement:
             createTable_statement(tableName,sqlMirrorModel:sqlMirrorModel)
-        case .wrapper:
-            createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
-        }
     }
     
     /// 根据object插入
@@ -222,12 +143,7 @@ open class SQLiteDataBase: NSObject {
     ///   - object: object
     ///   - tableName: 需要插入的tableName
     public func insert(_ object: SQLiteModel, intoTable tableName: String) {
-        switch self.operateType {
-        case .statement:
             insert_statement(object, intoTable: tableName)
-        case .wrapper:
-            insert_wrapper(object, intoTable: tableName)
-        }
     }
     
     /// 根据object修改数据库
@@ -236,12 +152,7 @@ open class SQLiteDataBase: NSObject {
     ///   - object: 需要修改的object
     ///   - tableName: talbeName
     public func update(_ object: SQLiteModel,fromTable tableName: String) {
-        switch self.operateType {
-        case .statement:
             update_statement(object,intoTable: tableName)
-        case .wrapper:
-            update_wrapper(object,intoTable: tableName)
-        }
     }
     
     
@@ -256,12 +167,7 @@ open class SQLiteDataBase: NSObject {
     }
     
     public func select(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]? {
-        switch self.operateType {
-        case .statement:
             return select_statement(object,fromTable: tableName)
-        case .wrapper:
-            return select_wrapper(object,fromTable: tableName)
-        }
     }
     
     /// 删除table里面的字段
@@ -274,24 +180,14 @@ open class SQLiteDataBase: NSObject {
     }
     
     public func delete(_ object: SQLiteModel,fromTable tableName: String) {
-        switch self.operateType {
-        case .statement:
             delete_statement(object,fromTable: tableName)
-        case .wrapper:
-            delete_wrapper(object,fromTable: tableName)
-        }
     }
     
     /// 删除整张表
     ///
     /// - Parameter tableName: 删除的表名
     public func drop(dropTable tableName: String) {
-        switch self.operateType {
-        case .statement:
             drop_statement(dropTable:tableName)
-        case .wrapper:
-            drop_wrapper(dropTable:tableName)
-        }
     }
     
     // MARK: - 获取默认的路径地址
@@ -779,367 +675,5 @@ extension SQLiteDataBase {
         }
         
         return false
-    }
-}
-
-
-// MARK: - 所有SQLite.swift封装的方法
-extension SQLiteDataBase {
-    // MARK: - 类方法
-    public class func createTable_wrapper(_ tableName: String,object:SQLiteModel) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return
-        }
-        
-        sqliteDataBase.createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
-    }
-    
-    public class func insert_wrapper(_ object: SQLiteModel, intoTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        sqliteDataBase.insert_wrapper(object, intoTable: tableName)
-    }
-    
-    public class func insertList_wrapper(_ objectList: [SQLiteModel], intoTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        for object in objectList {
-            sqliteDataBase.insert_wrapper(object, intoTable: tableName)
-        }
-    }
-    
-    public class func update_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        sqliteDataBase.update_wrapper(object,intoTable:tableName)
-    }
-    
-    public class func updateList_wrapper(_ objectList: [SQLiteModel], fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        for object in objectList {
-            sqliteDataBase.update_wrapper(object,intoTable:tableName)
-        }
-    }
-    
-    public class func selectAll_wrapper(fromTable tableName: String)->[[String:AnyObject]]{
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        return sqliteDataBase.select_wrapper(fromTable:tableName)
-    }
-    
-    public class func select_wrapper(_ object: SQLiteModel,fromTable tableName: String)->[[String:AnyObject]]{
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        return sqliteDataBase.select_wrapper(object,fromTable:tableName)
-    }
-    
-    public class func delete_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
-        let sqliteDataBase = SQLiteDataBase.shared
-        
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return
-        }
-        
-        for sqlPropertie in sqlMirrorModel.sqlProperties {
-            let key = sqlPropertie.key
-            
-            guard key == sqlMirrorModel.sqlPrimaryKey else {
-                continue
-            }
-            
-            sqliteDataBase.delete_wrapper(object, fromTable: tableName)
-        }
-    }
-    
-
-    public class func drop_wrapper(dropTable tableName: String){
-        let sqliteDataBase = SQLiteDataBase.shared
-        sqliteDataBase.drop_wrapper(dropTable:tableName)
-    }
-    
-    // MARK: - 实例方法
-    public func createTable_wrapper(_ tableName: String,sqlMirrorModel:SQLMirrorModel) {
-        
-        if !checkNameIsVerify(tableName) {
-            sqlitePrint("failed to create table: \(tableName)")
-            return
-        }
-        
-        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
-        
-        if let _ = dataBaseTables[tableFinalName] {
-            return
-        }
-
-        do {
-            let dataBaseTable = Table(tableFinalName)
-            
-            if let database = database {
-                weak var weakSelf = self
-                _ = try database.run(dataBaseTable.create(ifNotExists: true, block: { (tableBuilder) in
-                    if let strongSelf = weakSelf {
-                        for sqlPropertie in sqlMirrorModel.sqlProperties {
-                            sqlPropertie.sqlBuildRow(builder: tableBuilder, isPkid: sqlPropertie.isPrimaryKey)
-                        }
-                        
-                        strongSelf.dataBaseTables[tableFinalName] = dataBaseTable
-                    }
-                }))
-            }
-        } catch {
-            sqlitePrint("创建表失败: \(error)")
-        }
-    }
-    
-    public func insert_wrapper(_ object: SQLiteModel, intoTable tableName: String) {
-        save_wrapper(object,intoTable:tableName)
-    }
-    
-    public func update_wrapper(_ object: SQLiteModel,intoTable tableName: String) {
-        save_wrapper(object,intoTable:tableName)
-    }
-    
-    public func save_wrapper(_ object: SQLiteModel,intoTable tableName: String){
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return
-        }
-        
-
-        createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
-        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
-        
-        var sqlSetters:[Setter] = []
-        
-        var primaryKeyModel:SQLPropertyModel?
-        
-        for sqlPropertie in sqlMirrorModel.sqlProperties {
-            if sqlPropertie.isPrimaryKey == true {
-                primaryKeyModel = sqlPropertie
-            }
-            
-            /// 如果不存在，就添加
-            let key = sqlPropertie.key
-            addColumnIfNoExist_wrapper(key, fromTable: tableName)
-            
-            sqlSetters.append(sqlPropertie.sqlSetter(object))
-        }
-        
-        do {
-            guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let primaryKeyModel = primaryKeyModel else {
-                return
-            }
-
-            let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
-
-            if let _ = try database?.pluck(filterTable) {//如果存在就更新
-                _ = try database?.run(filterTable.update(sqlSetters))
-            }else {
-                _ = try database?.run(dataBaseTable.insert(sqlSetters))
-            }
-        } catch {
-            sqlitePrint(error)
-        }
-    }
-    
-
-    
-    public func select_wrapper(_ object: SQLiteModel? = nil,fromTable tableName: String)->[[String:AnyObject]] {
-        var results = [[String:AnyObject]]()
-        
-        if tableExists(tableName: tableName) == false {
-            return results
-        }
-        
-        guard let object = object else {
-            return results
-        }
-
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return results
-        }
-        
-        let modelResults: [SQLiteModel] = select_wrapper_model(object, fromTable: tableName)
-        
-        //为了保持统一
-        for modelResult in modelResults {
-
-            // 利用反射取值
-            var result = [String:AnyObject]()
-        
-            let mirror = Mirror(reflecting: modelResult)
-            
-            guard let displayStyle = mirror.displayStyle else {
-                continue
-            }
-            
-            guard mirror.children.count > 0 else {
-                continue
-            }
-            
-            for sqlPropertie in sqlMirrorModel.sqlProperties {
-            
-                // 利用反射取值，不使用KVC，因为KVC不支持optional
-                var value:Any?
-                for child in mirror.children{
-                    if sqlPropertie.key == child.label { //注意字典只能保存AnyObject类型。
-                        value = sqlPropertie.value
-                        break
-                    }
-                }
-
-                if value == nil {
-                    value = modelResult.value(forKey: sqlPropertie.key)
-                }
-                
-                result[sqlPropertie.key] = value as AnyObject
-            }
-            
-            results.append(result)
-        }
-        
-        return results
-
-    }
-    
-    public func select_wrapper_model(_ object: SQLiteModel,fromTable tableName: String)->[SQLiteModel] {
-        var results = [SQLiteModel]()
-        if tableExists(tableName: tableName) == false {
-            return results
-        }
-        
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return results
-        }
-        
-        
-        createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
-        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
-        
-        guard let dataBaseTable:Table = dataBaseTables[tableFinalName] else {
-            return results
-        }
-        
-        do {
-            guard let datas = try database?.prepare(dataBaseTable) else {
-                return results
-            }
-            
-            let classType:SQLiteModel.Type = type(of:object)
-
-            for data in datas {
-                let sqLiteModel = classType.init()
-                for sqlPropertie in sqlMirrorModel.sqlProperties {
-                    sqlPropertie.sqlRowToModel(sqLiteModel, row: data)
-                }
-                
-                guard let primaryKey = sqLiteModel.primaryKey() else {
-                    break
-                }
-                
-                if  let sqLitePriKey = sqLiteModel.value(forKey: primaryKey) as? String,let objPriKey = object.value(forKey: primaryKey) as? String {
-                    //只提取primaryKey一致的数据
-                    if sqLitePriKey == objPriKey{
-                        results.append(sqLiteModel)
-                    }
-                }else{
-                    results.append(sqLiteModel)
-                }
-            }
-            
-            
-        } catch {
-            sqlitePrint(error)
-        }
-        
-        return results
-    }
-    
-
-    public func delete_wrapper(_ object: SQLiteModel,fromTable tableName: String) {
-        if tableExists(tableName: tableName) == false {
-            return
-        }
-        
-        guard let sqlMirrorModel = SQLMirrorModel.operateByMirror(object: object) else {
-            return
-        }
-        
-        createTable_wrapper(tableName,sqlMirrorModel:sqlMirrorModel)
-        
-        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
-        
-        var primaryKeyModel:SQLPropertyModel!
-        
-        for sqlPropertie in sqlMirrorModel.sqlProperties {
-            if sqlPropertie.isPrimaryKey == true {
-                primaryKeyModel = sqlPropertie
-            }
-        }
-        
-        do {
-            guard let dataBaseTable:Table = dataBaseTables[tableFinalName],let primaryKeyModel = primaryKeyModel else {
-                return
-            }
-            
-            let filterTable = dataBaseTable.filter(primaryKeyModel.sqlFilter(object))
-            _ = try database?.run(filterTable.delete())
-            
-            self.dataBaseTables.removeValue(forKey: tableName)
-        } catch {
-            sqlitePrint(error)
-        }
-    }
-    
-    public func drop_wrapper(dropTable tableName: String) {
-        let tableFinalName = SQLiteDataBaseTool.removeBlankSpace(tableName)
-        
-        guard let dataBaseTable:Table = dataBaseTables[tableFinalName] else {
-            return
-        }
-        
-        do {
-            _ = try database?.run(dataBaseTable.drop(ifExists: true))
-            
-            self.dataBaseTables.removeValue(forKey: tableName)
-        } catch {
-            sqlitePrint(error)
-        }
-
-    }
-    
-    public func addColumnIfNoExist_wrapper(_ columnName: String,fromTable tableName: String){
-        do {
-            if tableExists(tableName: tableName) == false {
-                return
-            }
-            
-            let table = Table(tableName)
-            
-            let expression = table.expression
-            guard let oldColumnNames = try database?.prepare(expression.template, expression.bindings).columnNames else{
-                return
-            }
-            
-            var isExist = false
-            for oldColumnName in oldColumnNames  {
-                if columnName == oldColumnName {
-                    isExist = true
-                    break
-                }
-            }
-            
-            if !isExist {
-                do {
-                    try database?.run(table.addColumn(Expression<String?>(columnName)))
-                } catch  {
-                    
-                }
-            }
-        } catch {
-            sqlitePrint(error)
-        }
     }
 }

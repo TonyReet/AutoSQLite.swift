@@ -11,13 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destinationVc = segue.destination as! SQLiteOperateVc
         
-        if segue.identifier == "statement" {
-            destinationVc.operateType = .statement
-        }else if segue.identifier == "wrapper" {
-            destinationVc.operateType = .wrapper
-        }
     }
 }
 

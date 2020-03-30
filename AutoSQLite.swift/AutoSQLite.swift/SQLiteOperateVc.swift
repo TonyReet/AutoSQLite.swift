@@ -11,23 +11,9 @@ import AutoSQLiteSwift
 
 //SQL 语句操作的vc
 class SQLiteOperateVc: UIViewController {
-    var operateType: SQLiteOperateType = .statement{
-        didSet{
-            SQLiteDataBase.shared.operateType = self.operateType
-        }
-    }
-
     // 创建db
     lazy var manager: SQLiteDataBase = {
-        
-        var dataName = ""
-        if operateType == .statement {
-            dataName = "statementDB"
-        }else{
-            dataName = "wrapperDB"
-        }
-        
-        return SQLiteDataBase.createDB(dataName)
+        return SQLiteDataBase.createDB("statementDB")
     }()
 
     // 测试的model
