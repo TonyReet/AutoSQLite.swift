@@ -9,14 +9,11 @@
 import Foundation
 import SQLite
 
-/// 是否打开打印,true是打开,false是关闭
-let printDebug = true
-
 public func sqlitePrint(debug: Any...,
                   function: String = #function,
                   file: String = #file,
                   line: Int = #line) {
-    if !printDebug {return}
+    if !SQLiteManager.shared.printDebug {return}
     
     var filename = file
     if let match = filename.range(of: "[^/]*$", options: .regularExpression) {
@@ -26,14 +23,14 @@ public func sqlitePrint(debug: Any...,
 }
 
 public func sqlitePrint(_ items: Any..., separator: String = " ", terminator: String = "\n") {
-    if !printDebug {return}
+    if !SQLiteManager.shared.printDebug {return}
 
     Swift.print(items, separator:separator, terminator: terminator)
 }
 
 public func sqlitePrint<Target>(_ items: Any..., separator: String = " ", terminator: String = "\n", to output: inout Target) where Target : TextOutputStream {
     
-    if !printDebug {return}
+    if !SQLiteManager.shared.printDebug {return}
     
     Swift.print(items, separator: separator, terminator: terminator)
 }
@@ -332,6 +329,7 @@ extension SQLiteDataBase {
         
         sqlStr += ")"
         
+        sqlitePrint("create sqlStr:\(sqlStr)")
         execute(sqlStr)
     }
     

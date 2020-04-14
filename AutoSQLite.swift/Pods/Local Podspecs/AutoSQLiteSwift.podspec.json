@@ -1,6 +1,6 @@
 {
   "name": "AutoSQLiteSwift",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -12,7 +12,7 @@
   },
   "source": {
     "git": "https://github.com/TonyReet/AutoSQLite.swift.git",
-    "tag": "0.0.8"
+    "tag": "0.0.10"
   },
   "platforms": {
     "ios": "8.0"

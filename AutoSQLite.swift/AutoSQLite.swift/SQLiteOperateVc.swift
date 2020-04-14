@@ -35,88 +35,33 @@ class SQLiteOperateVc: UIViewController {
         return testModel;
     }()
     
-    // 测试的model
-    lazy var testModel1: TestModel = {
-        let testModel =  TestModel()
-
-        testModel.age       = 19
-        testModel.name      = "Tony1"
-        testModel.ignore    = "ignore"
-        testModel.weight    = 141
-        testModel.newAge    = 20
-        
-        testModel.optionalInt = 2
-        testModel.optionalFloat = 3.0
-        testModel.optionalDouble = 4.0
-        testModel.optionalisTest = true
-        testModel.optionalString = "optionalString"
-        
-        return testModel;
-    }()
-    
-
+    var updateIndex = 1
     let sqlTableName = "testTable"
     
-    @IBAction func createAction() {
-        
-    }
-    
     @IBAction func insertAction() {
-        insertOperate()
+        testModel.name = "Tony"
+        
+        manager.insert(testModel , intoTable: sqlTableName)
     }
     
     
     @IBAction func updateAction() {
-        updateOperate()
+        // 存在uuid，如果有数据就更新数据，没有数据insert
+        testModel.name = "Reet\(updateIndex)"
+        testModel.optionalString = "updateOptionalString"
+        
+        manager.update(testModel, fromTable: sqlTableName)
+        updateIndex += 1
     }
     
     
     @IBAction func deleteAction() {
-        deleteOperate()
-    }
-    
-    
-    @IBAction func selectAction() {
-        selectOperate()
-    }
-    
-    
-    @IBAction func dropAction() {
-        dropOperate()
-    }
-    
-    
-    @IBAction func dismissAction(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
-}
-
-
-
-// MARK: - sql语句操作的方法
-extension SQLiteOperateVc{
-    func insertOperate() {
-        testModel.name = "Tony"
-        
-        manager.insert(testModel , intoTable: sqlTableName)
-        manager.insert(testModel1 , intoTable: sqlTableName)
-    }
-    
-    
-    func updateOperate() {
-        testModel.name = "Reet"
-        testModel.optionalString = "updateOptionalString"
-        
-        manager.update(testModel, fromTable: sqlTableName)
-    }
-    
-    
-    func deleteOperate() {
         manager.delete(testModel, fromTable: sqlTableName)
     }
     
     
-    func selectOperate() {
+    @IBAction func selectAction() {
+        // select testModel
         guard let results = manager.select(testModel, fromTable: sqlTableName) else {
             sqlitePrint("没有查询到数据")
             return
@@ -126,7 +71,11 @@ extension SQLiteOperateVc{
     }
     
     
-    func dropOperate() {
+    @IBAction func dropAction() {
         manager.drop(dropTable: sqlTableName)
+    }
+    
+    @IBAction func dismissAction(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
     }
 }
