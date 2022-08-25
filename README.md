@@ -96,6 +96,5 @@ SQLPropertyModel.swift
 新增字段时，直接在表里面添加，避免报错
 
 
-有任何疑问或建议. 欢迎在github或微博里issue我. 
-微博:[@TonyReet](http://weibo.com/u/3648931023)
+有任何疑问或建议. 欢迎提issue。 
 
